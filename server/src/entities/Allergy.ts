@@ -19,11 +19,14 @@ import { Ingredient } from "./Ingredient";
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({unique:true})
     AllergyName: string;
   
-    @Column({unique:true})
+    @Column()
     AllergyDescription: string;
+    
+    @Column()
+    Image: string;
   
     @ManyToMany(() => Ingredient)
     @JoinTable()

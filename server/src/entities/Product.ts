@@ -38,9 +38,12 @@ import { Ingredient } from "./Ingredient";
 
     @Column()
     ProductDescription: string;
+    @Column()
+    ProductSecondDescription: string;
 
     @Column()
     ProductDimensions: string;
+
     @Column()
     PreferedSkinType: string;
 
