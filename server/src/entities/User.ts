@@ -3,47 +3,49 @@ import {
   Column,
   Unique,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from "typeorm";
-import { IsEmail, Min, Max, IsInt, Length, IsNotEmpty, MaxLength, MinLength } from "class-validator";
+import {
+  IsEmail,
+  Min,
+  Max,
+  IsInt,
+  Length,
+  IsNotEmpty,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 import * as bcrypt from "bcryptjs";
 
-
-export abstract  class User {
+export abstract class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   firstName: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   lastName: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   @IsEmail()
   email: string;
 
-
   @Column({ unique: true })
-  
   @IsInt()
   @Max(99999999)
   @Min(10000000)
   phoneNumber: number;
 
-
-  @Column('datetime',{nullable:true})
+  @Column("datetime", { nullable: true })
   birthDate: Date;
 
-
-  
-  @Column({nullable:true})
- // @Length(4, 100)
+  @Column({ nullable: true })
+  // @Length(4, 100)
   password: string;
 
-  @Column({default:false})
+  @Column({ default: false })
   verified: boolean;
-
 
   @Column()
   @CreateDateColumn()
@@ -56,7 +58,7 @@ export abstract  class User {
   @Column()
   role: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   city: string;
 
   hashPassword() {
@@ -67,10 +69,3 @@ export abstract  class User {
     return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 }
-
-
-
-
-
-
-

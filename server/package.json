@@ -14,11 +14,10 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.1",
     "class-validator": "^0.11.0",
-    "convert-excel-to-json": "^1.6.1",
     "cors": "^2.8.5",
     "express": "^4.15.4",
     "fcm-node": "^1.5.2",
-    "firebase-admin": "^8.12.1",
+    "firebase-admin": "^9.8.0",
     "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.2",
@@ -33,7 +32,7 @@
     "xlsx-to-json-lc": "^0.5.0"
   },
   "scripts": {
-    "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
+    "start": "set debug=* && ts-node-dev --respawn --transpile-only ./src/server.ts",
     "tsc": "tsc",
     "prod": "tsc && node ./build/app.js",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"

@@ -1,35 +1,26 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn,
-    OneToMany,
-    ManyToOne
-  } from "typeorm";
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+  ManyToOne,
+} from "typeorm";
+import { Allergy } from "./Allergy";
 
+@Entity()
+export class Ingredient {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  
-  @Entity()
-  export class Ingredient {
+  @Column()
+  IngredientName: string;
 
+  @Column({ unique: true })
+  IngredientType: string;
 
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column()
-    IngredientName: string;
-  
-    @Column({unique:true})
-    IngredientType: string;
-  
-    
-    
-
-  }
-  
-  
-  
-  
-  
-  
+  @ManyToMany(() => Allergy)
+  @JoinTable()
+  AllergyTriggered: Allergy[];
+}

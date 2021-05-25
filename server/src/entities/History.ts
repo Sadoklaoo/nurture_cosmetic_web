@@ -4,26 +4,24 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
-  OneToMany,
+  ManyToMany,
+  JoinTable,
   ManyToOne,
-  CreateDateColumn,
 } from "typeorm";
-
 import { Client } from "./Client";
+import { Product } from "./Product";
 
 @Entity()
-export class Notification {
+export class History {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  TitleNotification: string;
-  @Column()
-  BodyNotification: string;
+  SearchString: string;
 
-  @Column()
-  @CreateDateColumn()
-  createdAt: Date;
+  @ManyToMany(() => Product)
+  @JoinTable()
+  ConsultedProducts: Product[];
 
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })
   @JoinColumn()

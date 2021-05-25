@@ -1,42 +1,30 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn,
-    ManyToMany,
-    JoinTable,
-    ManyToOne
-  } from "typeorm";
-import { Ingredient } from "./Ingredient";
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+  ManyToOne,
+} from "typeorm";
+import { Client } from "./Client";
 
+@Entity()
+export class Allergy {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  
-  @Entity()
-  export class Allergy {
+  @Column({ unique: true })
+  AllergyName: string;
 
+  @Column()
+  AllergyDescription: string;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  Image: string;
 
-    @Column({unique:true})
-    AllergyName: string;
-  
-    @Column()
-    AllergyDescription: string;
-    
-    @Column()
-    Image: string;
-  
-    @ManyToMany(() => Ingredient)
-    @JoinTable()
-    Triggers: Ingredient[];
-    
-
-  }
-  
-  
-  
-  
-  
-  
+  @ManyToOne((client) => Client, { onDelete: "CASCADE" })
+  @JoinColumn()
+  client: Client;
+}

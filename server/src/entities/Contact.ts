@@ -1,41 +1,33 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToOne,
-    CreateDateColumn,
-    JoinColumn,
-    ManyToOne,
-    Index
-   
-  } from "typeorm";
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  CreateDateColumn,
+  JoinColumn,
+  ManyToOne,
+  Index,
+} from "typeorm";
 import { Admin } from "./Admin";
 import { Client } from "./Client";
 
+@Entity()
+export class Contact {
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Column()
+  message: string;
 
-  
-  @Entity()
-  export class Contact{
-  
+  @OneToOne(() => Admin, (admin) => admin.id)
+  @JoinColumn()
+  Manager: Admin;
 
-    @PrimaryGeneratedColumn()
-    id: number;
-  
-    @Column()
-    message: string;
+  @ManyToOne(() => Client, (client) => client.id, { nullable: true })
+  @JoinColumn()
+  Client: Client;
 
-    @OneToOne(() => Admin, (admin) => admin.id)
-    @JoinColumn()
-    Manager:Admin
-    
-    @ManyToOne(() => Client,(client)=>client.id,{ nullable: true }) 
-    @JoinColumn()
-    Client: Client;
-
-    @Column()
-    @CreateDateColumn()
-    date: Date;
-
-
-  }
+  @Column()
+  @CreateDateColumn()
+  date: Date;
+}

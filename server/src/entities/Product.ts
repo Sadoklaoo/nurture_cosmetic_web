@@ -1,60 +1,49 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToMany,
-    JoinTable,
-    OneToMany,
-    ManyToOne
-  } from "typeorm";
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+  ManyToOne,
+} from "typeorm";
 import { Ingredient } from "./Ingredient";
 
+@Entity()
+export class Product {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  
-  @Entity()
-  export class Product {
+  @Column()
+  ProductName: string;
 
+  @Column({ unique: true })
+  Reference: string;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column({ type: "float" })
+  Price: number;
 
-    @Column()
-    ProductName: string;
-  
-    @Column({unique:true})
-    Reference: string;
-  
-    @Column({ type: "float" })
-    Price: number;
+  @Column({ type: "float" })
+  Rank: number;
 
-    @Column({ type: "float" })
-    Rank: number;
-    
-    @Column()
-    Image: string;
+  @Column()
+  Image: string;
 
-    @Column()
-    Type: string;
+  @Column()
+  Type: string;
 
-    @Column()
-    ProductDescription: string;
-    @Column()
-    ProductSecondDescription: string;
+  @Column()
+  ProductDescription: string;
+  @Column()
+  ProductSecondDescription: string;
 
-    @Column()
-    ProductDimensions: string;
+  @Column()
+  ProductDimensions: string;
 
-    @Column()
-    PreferedSkinType: string;
+  @Column()
+  PreferedSkinType: string;
 
-    @ManyToMany(() => Ingredient)
-    @JoinTable()
-    ProductIngredients: Ingredient[];
-
-  }
-  
-  
-  
-  
-  
-  
+  @ManyToMany(() => Ingredient)
+  @JoinTable()
+  ProductIngredients: Ingredient[];
+}
