@@ -21,6 +21,6 @@ export class Ingredient {
   IngredientType: string;
 
   @ManyToMany(() => Allergy)
-  @JoinTable()
+  @JoinTable({name: 'ingredient_trigered_allergy',})
   AllergyTriggered: Allergy[];
 }

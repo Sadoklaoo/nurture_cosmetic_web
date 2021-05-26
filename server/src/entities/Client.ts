@@ -48,6 +48,6 @@ export class Client extends User {
 
   
   @ManyToMany(() => Product)
-  @JoinTable()
+  @JoinTable({name: 'client_favoris',})
   Favoris: Product[];
 }

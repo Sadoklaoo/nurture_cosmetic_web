@@ -7,6 +7,7 @@ import * as cors from "cors";
 
 
 import * as multer from "multer";
+import routes from "./routes";
 
 //Connects to the Database -> then starts the express
 createConnection()
@@ -18,7 +19,7 @@ createConnection()
     app.use(helmet());
     app.use(bodyParser.json());
     //Set all routes from routes folder
-  //  app.use("/", routes);
+    app.use("/", routes);
 
     app.listen(3000, () => {
       console.log("Server started on port 3000!");

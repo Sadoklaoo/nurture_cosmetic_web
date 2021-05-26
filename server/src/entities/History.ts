@@ -20,7 +20,7 @@ export class History {
   SearchString: string;
 
   @ManyToMany(() => Product)
-  @JoinTable()
+  @JoinTable({name: 'history_consulted',})
   ConsultedProducts: Product[];
 
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })

@@ -44,6 +44,6 @@ export class Product {
   PreferedSkinType: string;
 
   @ManyToMany(() => Ingredient)
-  @JoinTable()
+  @JoinTable({name: 'product_ingredients',})
   ProductIngredients: Ingredient[];
 }
