@@ -13,6 +13,31 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/iot-dashboard',
   },
   {
+    title: 'Allergies',
+    icon: 'sun-outline',
+    link: '/pages/allergies'
+  },
+  {
+    title: 'Ingrédients',
+    icon: 'clipboard-outline',
+    link: '/pages/allergies'
+  },
+  {
+    title: 'Produits',
+    icon: 'pricetags-outline',
+    link: '/pages/allergies'
+  },
+  {
+    title: 'Réclamations',
+    icon: 'question-mark-circle-outline',
+    link: '/pages/allergies'
+  },
+  {
+    title: 'Utilisateurs',
+    icon: 'people-outline',
+    link: '/pages/allergies'
+  },
+  {
     title: 'FEATURES',
     group: true,
   },
