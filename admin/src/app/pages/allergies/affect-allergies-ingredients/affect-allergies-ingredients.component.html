@@ -1,0 +1,31 @@
+<nb-card>
+    <nb-card-header>
+        Affecter allergie/ingrédients
+    </nb-card-header>
+
+    <nb-card-body>
+        <nb-alert>
+            Choisissez une allergie pour pouvoir manipuler les ingrédients provoquantes.
+          </nb-alert>
+        
+        <div class="form-group row">
+            <label for="inputEmail1" class="label col-sm-2 col-form-label">Choisi une allergie</label>
+            <div class="col-sm-9">
+                <nb-select selected="0">
+                    <nb-option value="1">Option 1</nb-option>
+                    <nb-option value="2">Option 2</nb-option>
+                </nb-select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="inputEmail1" class="label col-sm-2 col-form-label">Ses ingrédients</label>
+            <div class="col-sm-9">
+                <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
+                </ng2-smart-table>
+            </div>
+        </div>
+
+
+    </nb-card-body>
+</nb-card>

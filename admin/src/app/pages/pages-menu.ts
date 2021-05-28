@@ -15,7 +15,17 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Allergies',
     icon: 'sun-outline',
-    link: '/pages/allergies'
+    children: [
+      {
+        title: 'List allergies',
+        link: '/pages/allergies/list-allergies',
+      },
+      {
+        title: 'Affecter allergies/ingredients',
+        link: '/pages/allergies/affect-allergies-ingredients',
+      },
+    ]
+    
   },
   {
     title: 'Ingrédients',
