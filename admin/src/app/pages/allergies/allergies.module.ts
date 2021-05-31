@@ -12,11 +12,7 @@ import {
   NbSelectModule,
   NbAlertModule,
   NbListModule,
-  NbRouteTabsetModule,
-  NbTabsetModule,
-  NbAccordionModule,
   NbButtonModule,
-  NbStepperModule,
   NbUserModule,
   NbSpinnerModule,
 } from '@nebular/theme';
