@@ -8,7 +8,7 @@ describe('AffectAllergiesIngredientsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AffectAllergiesIngredientsComponent ]
+      declarations: [ AffectAllergiesIngredientsComponent ],
     })
     .compileComponents();
   });

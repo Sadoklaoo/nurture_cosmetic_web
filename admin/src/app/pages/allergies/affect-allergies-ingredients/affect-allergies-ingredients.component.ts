@@ -5,7 +5,7 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 @Component({
   selector: 'ngx-affect-allergies-ingredients',
   templateUrl: './affect-allergies-ingredients.component.html',
-  styleUrls: ['./affect-allergies-ingredients.component.scss']
+  styleUrls: ['./affect-allergies-ingredients.component.scss'],
 })
 export class AffectAllergiesIngredientsComponent implements OnInit {
 
@@ -16,7 +16,6 @@ export class AffectAllergiesIngredientsComponent implements OnInit {
     this.loading = true;
     setTimeout(() => this.loading = false, 3000);
   }
-  
   users: { name: string, title: string }[] = [
     { name: 'Carla Espinosa', title: 'Nurse' },
     { name: 'Bob Kelso', title: 'Doctor of Medicine' },
@@ -24,8 +23,6 @@ export class AffectAllergiesIngredientsComponent implements OnInit {
     { name: 'Perry Cox', title: 'Doctor of Medicine' },
     { name: 'Ben Sullivan', title: 'Carpenter and photographer' },
   ];
- 
-
   ngOnInit(): void {
   }
 

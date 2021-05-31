@@ -5,7 +5,7 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 @Component({
   selector: 'ngx-list-ingredients',
   templateUrl: './list-ingredients.component.html',
-  styleUrls: ['./list-ingredients.component.scss']
+  styleUrls: ['./list-ingredients.component.scss'],
 })
 export class ListIngredientsComponent implements OnInit {
 

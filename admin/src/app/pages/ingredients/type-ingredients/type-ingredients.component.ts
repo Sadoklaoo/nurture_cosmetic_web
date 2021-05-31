@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'ngx-type-ingredients',
   templateUrl: './type-ingredients.component.html',
-  styleUrls: ['./type-ingredients.component.scss']
+  styleUrls: ['./type-ingredients.component.scss'],
 })
 export class TypeIngredientsComponent implements OnInit {
 

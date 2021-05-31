@@ -5,7 +5,7 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 @Component({
   selector: 'ngx-list-allergies',
   templateUrl: './list-allergies.component.html',
-  styleUrls: ['./list-allergies.component.scss']
+  styleUrls: ['./list-allergies.component.scss'],
 })
 export class ListAllergiesComponent implements OnInit {
   settings = {
@@ -64,8 +64,6 @@ export class ListAllergiesComponent implements OnInit {
       event.confirm.reject();
     }
   }
-
- 
 
   ngOnInit(): void {
   }

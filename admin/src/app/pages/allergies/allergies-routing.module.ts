@@ -11,23 +11,22 @@ const routes: Routes = [
   children: [
     {
       path: 'list-allergies',
-     component : ListAllergiesComponent
+     component : ListAllergiesComponent,
     },
     {
       path: 'affect-allergies-ingredients',
-     component: AffectAllergiesIngredientsComponent
+     component: AffectAllergiesIngredientsComponent,
     },
   ],
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AllergiesRoutingModule { }
 
 export const routedComponents = [
   AllergiesComponent,
-  
 ];
