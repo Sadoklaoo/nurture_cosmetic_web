@@ -24,6 +24,11 @@ const routes: Routes = [{
         .then(m => m.AllergiesModule),
     },
     {
+      path: 'ingredients',
+      loadChildren: () => import('./ingredients/ingredients.module')
+        .then(m => m.IngredientsModule),
+    },
+    {
       path: 'layout',
       loadChildren: () => import('./layout/layout.module')
         .then(m => m.LayoutModule),

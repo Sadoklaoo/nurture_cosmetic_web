@@ -30,7 +30,16 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Ingrédients',
     icon: 'clipboard-outline',
-    link: '/pages/allergies'
+    children: [
+      {
+        title: 'List ingrédients',
+        link: '/pages/ingredients/list-ingredients',
+      },
+      {
+        title: 'Type ingredients',
+        link: '/pages/ingredients/type-ingredients',
+      },
+    ]
   },
   {
     title: 'Produits',

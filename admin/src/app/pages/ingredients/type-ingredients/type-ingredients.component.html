@@ -1,0 +1,42 @@
+<nb-card>
+    <nb-card-header>
+     Type d'ingrédient
+    </nb-card-header>
+  
+    <nb-card-body>
+      <nb-alert>
+        Choisissez un ingrédient  pour sélectionner son type.
+      </nb-alert>
+  
+      
+  
+      <div class="form-group row">
+        <label for="inputEmail1" class="label col-sm-3 col-form-label">Choisi un ingrédient  </label>
+        <div class="col-sm-9">
+          <nb-select selected="1"  (selectedChange)="toggleLoadingAnimation()">
+            <nb-option value="1">Ingredient 1</nb-option>
+            <nb-option value="2">Ingredient 2</nb-option>
+            <nb-option value="3">Ingredient 3</nb-option>
+            <nb-option value="4">Ingredient 4</nb-option>
+            <nb-option value="5">Ingredient 5</nb-option>
+          </nb-select>
+          
+        </div>
+  
+      </div>
+      <div class="form-group row" >
+        <label for="inputEmail1" class="label col-sm-3 col-form-label">Choisi un type </label>
+        <div class="col-sm-9">
+          <nb-select selected="1" [nbSpinner]="loading" nbSpinnerStatus="primary">
+            <nb-option value="1">Type 1</nb-option>
+            <nb-option value="2">Type 2</nb-option>
+            <nb-option value="3">Type 3</nb-option>
+            <nb-option value="4">Type 4</nb-option>
+            <nb-option value="5">Type 5</nb-option>
+          </nb-select>
+        </div>
+      </div>
+  
+  
+    </nb-card-body>
+  </nb-card>

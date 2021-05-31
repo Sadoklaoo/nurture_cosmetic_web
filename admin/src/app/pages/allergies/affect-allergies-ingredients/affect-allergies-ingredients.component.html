@@ -1,31 +1,63 @@
 <nb-card>
-    <nb-card-header>
-        Affecter allergie/ingrédients
-    </nb-card-header>
+  <nb-card-header>
+    Affecter allergie/ingrédients
+  </nb-card-header>
 
-    <nb-card-body>
-        <nb-alert>
-            Choisissez une allergie pour pouvoir manipuler les ingrédients provoquantes.
-          </nb-alert>
+  <nb-card-body>
+    <nb-alert>
+      Choisissez une allergie pour pouvoir manipuler les ingrédients provoquantes.
+    </nb-alert>
+
+    <div class="form-group row">
+      <label for="inputEmail1" class="label col-sm-3 col-form-label">Choisi une allergie</label>
+      <div class="col-sm-9">
+        <nb-select selected="1" (selectedChange)="toggleLoadingAnimation()">
+          <nb-option value="1">Allergie 1</nb-option>
+          <nb-option value="2">Allergie 2</nb-option>
+          <nb-option value="3">Allergie 3</nb-option>
+          <nb-option value="4">Allergie 4</nb-option>
+          <nb-option value="5">Allergie 5</nb-option>
+        </nb-select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="inputEmail1" class="label col-sm-3 col-form-label">Choisi un ingrédient pour ajouter </label>
+      <div class="col-sm-9">
+        <nb-select selected="1"  (selectedChange)="toggleLoadingAnimation()">
+          <nb-option value="1">Ingredient 1</nb-option>
+          <nb-option value="2">Ingredient 2</nb-option>
+          <nb-option value="3">Ingredient 3</nb-option>
+          <nb-option value="4">Ingredient 4</nb-option>
+          <nb-option value="5">Ingredient 5</nb-option>
+        </nb-select>
         
-        <div class="form-group row">
-            <label for="inputEmail1" class="label col-sm-2 col-form-label">Choisi une allergie</label>
-            <div class="col-sm-9">
-                <nb-select selected="0">
-                    <nb-option value="1">Option 1</nb-option>
-                    <nb-option value="2">Option 2</nb-option>
-                </nb-select>
-            </div>
-        </div>
+      </div>
 
-        <div class="form-group row">
-            <label for="inputEmail1" class="label col-sm-2 col-form-label">Ses ingrédients</label>
-            <div class="col-sm-9">
-                <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
-                </ng2-smart-table>
-            </div>
-        </div>
+    </div>
 
 
-    </nb-card-body>
+
+  </nb-card-body>
 </nb-card>
+
+<div class="lists row">
+
+
+  <div class="col-md-12 col-lg-12 col-xxxl-12">
+    <nb-card class="list-card" size="small" [nbSpinner]="loading" nbSpinnerStatus="primary">
+      <nb-card-header>Ingrédients Provoquantes </nb-card-header>
+      <nb-list >
+        <nb-list-item *ngFor="let user of users">
+
+          <button nbButton hero status="danger">
+            <nb-icon icon="trash"></nb-icon>
+          </button>
+          <nb-user [name]="user.name" [title]="user.title">
+          </nb-user>
+
+        </nb-list-item>
+      </nb-list>
+    </nb-card>
+  </div>
+</div>
