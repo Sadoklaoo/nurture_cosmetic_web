@@ -1,0 +1,42 @@
+<nb-card>
+    <nb-card-header>
+     Etat réclamation
+    </nb-card-header>
+  
+    <nb-card-body>
+      <nb-alert>
+        Modifier l'etat d'une réclamation.
+      </nb-alert>
+  
+      
+  
+      <div class="form-group row">
+        <label for="inputEmail1" class="label col-sm-3 col-form-label">Choisi une réclamation  </label>
+        <div class="col-sm-9">
+          <nb-select selected="1"  (selectedChange)="toggleLoadingAnimation()">
+            <nb-option value="1">Reclamation 1</nb-option>
+            <nb-option value="2">Reclamation 2</nb-option>
+            <nb-option value="3">Reclamation 3</nb-option>
+            <nb-option value="4">Reclamation 4</nb-option>
+            <nb-option value="5">Reclamation 5</nb-option>
+          </nb-select>
+          
+        </div>
+  
+      </div>
+      <div class="form-group row" >
+        <label for="inputEmail1" class="label col-sm-3 col-form-label">Changer état </label>
+        <div class="col-sm-9">
+          <nb-select selected="1" [nbSpinner]="loading" nbSpinnerStatus="primary">
+            <nb-option value="1">Etat 1</nb-option>
+            <nb-option value="2">Etat 2</nb-option>
+            <nb-option value="3">Etat 3</nb-option>
+            <nb-option value="4">Etat 4</nb-option>
+            <nb-option value="5">Etat 5</nb-option>
+          </nb-select>
+        </div>
+      </div>
+  
+  
+    </nb-card-body>
+  </nb-card>

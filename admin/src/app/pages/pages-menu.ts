@@ -61,11 +61,44 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Réclamations',
     icon: 'question-mark-circle-outline',
-    link: '/pages/allergies',
+    children: [
+      {
+        title: 'List réclamations',
+        link: '/pages/reclamations/list-reclamation',
+      },
+      {
+        title: 'Changer état réclamation',
+        link: '/pages/reclamations/etat-reclamation',
+      },
+    
+    ],
   },
   {
     title: 'Utilisateurs',
     icon: 'people-outline',
+    children: [
+      {
+        title: 'List utilisateurs',
+        link: '/pages/users/list-users',
+      },
+      {
+        title: 'Historique de recherche',
+        link: '/pages/users/user-search-history',
+      },
+      {
+        title: 'Allergies utilisateur',
+        link: '/pages/users/user-allergies',
+      },
+      {
+        title: 'Type de peau',
+        link: '/pages/users/user-skin-type',
+      },
+    
+    ],
+  },
+  {
+    title: 'Catégories',
+    icon: 'grid-outline',
     link: '/pages/allergies',
   },
   {

@@ -4,11 +4,9 @@
       <nb-card-header>Sélectionner un produit</nb-card-header>
       <nb-card-body>
         <div class="form-group row">
-          <label for="reference" class="label col-sm-3 col-form-label"
-            >Référence</label
-          >
+          <label for="reference" class="label col-sm-3 col-form-label">Référence</label>
           <div class="col-sm-9">
-            <nb-select selected="1" id="reference">
+            <nb-select selected="1" id="reference" (selectedChange)="toggleLoadingAnimation()">
               <nb-option value="1">Produit 1</nb-option>
               <nb-option value="2">Produit 2</nb-option>
             </nb-select>
@@ -19,23 +17,40 @@
 
     <nb-card>
       <nb-card-header>Image du Produit</nb-card-header>
-      <nb-card-body>
-        <img
-          src="../../../../assets/images/product_icon.png"
-          alt="image"
-          class="col-lg-6 center"
-        />
+      <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <img src="../../../../assets/images/product_icon.png" alt="image" class="col-lg-6 center" />
 
         <button nbButton outline status="primary">
           <nb-icon icon="save"></nb-icon> Changer image
         </button>
       </nb-card-body>
     </nb-card>
+    
+      <nb-card class="list-card" size="small">
+        <nb-card-header>Ingrédients</nb-card-header>
+        <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
+          <nb-list-item *ngFor="let user of users">
+            <nb-user [name]="user.name" [title]="user.title">
+            </nb-user>
+          </nb-list-item>
+        </nb-list>
+      </nb-card>
+
+      <nb-card class="list-card" size="small">
+        <nb-card-header>Allergies</nb-card-header>
+        <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
+          <nb-list-item *ngFor="let user of users">
+            <nb-user [name]="user.name" [title]="user.title">
+            </nb-user>
+          </nb-list-item>
+        </nb-list>
+      </nb-card>
+    
   </div>
   <div class="col-lg-6">
     <nb-card>
       <nb-card-header>Détails Produit</nb-card-header>
-      <nb-card-body>
+      <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
         <form>
           <div class="form-group">
             <label for="nom" class="label">Nom Produit</label>
@@ -43,59 +58,62 @@
           </div>
           <div class="form-group">
             <label for="reference" class="label">Référence</label>
-            <input
-              disabled
-              type="text"
-              nbInput
-              fullWidth
-              id="reference"
-              placeholder="Référence"
-            />
+            <input disabled type="text" nbInput fullWidth id="reference" placeholder="Référence" />
           </div>
           <div class="form-group">
             <label for="price" class="label">Prix</label>
-            <input
-              type="text"
-              nbInput
-              fullWidth
-              id="price"
-              placeholder="Prix"
-            />
+            <input type="text" nbInput fullWidth id="price" placeholder="Prix" />
           </div>
           <div class="form-group">
             <label for="rank" class="label">Score</label>
-            <input
-              disabled
-              type="text"
-              nbInput
-              fullWidth
-              id="rank"
-              placeholder="Score"
-            />
+            <input disabled type="text" nbInput fullWidth id="rank" placeholder="Score" />
           </div>
           <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Catégorie</label
-            >
+            <label for="reference" class="label col-sm-3 col-form-label">Catégorie</label>
 
             <nb-select selected="1" id="reference">
               <nb-option value="1">Catégorie 1</nb-option>
               <nb-option value="2">Catégorie 2</nb-option>
             </nb-select>
           </div>
-          <nb-card>
-            <nb-card-header>Checkboxes & Radios</nb-card-header>
-            <nb-card-body class="checkbox-radio">
-              <div >
-                <nb-checkbox>Checkbox 1</nb-checkbox>
-                <nb-checkbox checked>Checkbox 2</nb-checkbox>
-              </div>
-              
-            </nb-card-body>
-          </nb-card>
-
+          <div class="form-group row">
+            <label for="reference" class="label col-sm-3 col-form-label">Type</label>
+            <div>
+              <nb-checkbox>Bio</nb-checkbox><br>
+              <nb-checkbox>Vegan</nb-checkbox><br>
+              <nb-checkbox>Naturelle</nb-checkbox><br>
+              <nb-checkbox>Sans allergenes</nb-checkbox><br>
+              <nb-checkbox>Eco</nb-checkbox><br>
+              <nb-checkbox checked>Organique</nb-checkbox>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="reference" class="label col-sm-3 col-form-label"
+              >Peau suggéré</label
+            >
+            <nb-select selected="1" id="reference">
+              <nb-option value="1">Skin Type 1</nb-option>
+              <nb-option value="2">Skin Type 2</nb-option>
+            </nb-select>
+          </div>
+          <div class="form-group">
+            <label for="rank" class="label">Dimensions</label>
+            <input disabled type="text" nbInput fullWidth id="rank" placeholder="Score" />
+          </div>
+          <div class="form-group row">
+            <label for="reference" class="label col-sm-3 col-form-label"
+              >Description </label
+            >
+            <textarea rows="5" nbInput fullWidth   placeholder="Text Area"></textarea>
+          </div>
           
-          
+          <div class="form-group row">
+            <label for="reference" class="label col-sm-3 col-form-label"
+              >Autre description </label
+            >
+            <nb-checkbox>Autre description</nb-checkbox><br>
+            <textarea rows="5" nbInput fullWidth disabled  placeholder="Text Area"></textarea>
+          </div>
           <button type="submit" nbButton status="danger">Modifier</button>
         </form>
       </nb-card-body>

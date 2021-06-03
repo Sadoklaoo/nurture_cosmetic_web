@@ -5,10 +5,12 @@ import { ReclamationsRoutingModule, routedComponents } from './reclamations-rout
 import { NbCardModule, NbSelectModule, NbSpinnerModule, NbIconModule, NbAlertModule, NbInputModule, NbUserModule } from '@nebular/theme';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ThemeModule } from '../../@theme/theme.module';
+import { ListReclamationComponent } from './list-reclamation/list-reclamation.component';
+import { EtatReclamationComponent } from './etat-reclamation/etat-reclamation.component';
 
 
 @NgModule({
-  declarations: [...routedComponents,],
+  declarations: [...routedComponents, ListReclamationComponent, EtatReclamationComponent,],
   imports: [
     CommonModule,
     ReclamationsRoutingModule,
