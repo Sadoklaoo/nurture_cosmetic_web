@@ -7,10 +7,20 @@ const router = Router();
 router.post("/login", AuthController.login);
 //Login route for Angular
 router.post("/loginWeb", AuthController.loginWeb);
-// NewClient  Flutter
-router.post("/newclient", AuthController.sendRequestCode);
+
+//New Account Flutter
+router.post("/newaccount", AuthController.newAccount);
+
+// Send Verification Code  Flutter
+router.post("/sendCode", AuthController.sendRequestCode);
+
+// Resend Verification Code  Flutter
+router.post("/resendCode", AuthController.resendRequestCode);
+
 // Check request code for new client 
-router.post("/check", AuthController.checkRequstCode);
+router.post("/check", AuthController.checkRequestCode);
+
+
 //Change my password
 router.post("/change-password", [checkJwt], AuthController.changePassword);
 

@@ -1,7 +1,7 @@
 
 export default {
     jwtSecret: "@QEGTUI",
-    accountSid : "ACcc222510e1792fb223da1fb5350400ec",
-    authToken :   "34206f4dd80830f9ba2218a547d8fe8c"
+    accountSid : "AC1eb64e5b248b47ef7b006e93b5d62720",
+    authToken :   "9e74abb99aa39a93b4ec106d7b7a5235"
 
   };

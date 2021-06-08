@@ -5,8 +5,10 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  JoinColumn,
   ManyToOne,
 } from "typeorm";
+import { Category } from "./Category";
 import { Ingredient } from "./Ingredient";
 
 @Entity()
@@ -46,4 +48,8 @@ export class Product {
   @ManyToMany(() => Ingredient)
   @JoinTable({name: 'product_ingredients',})
   ProductIngredients: Ingredient[];
+
+  @ManyToOne((category) => Category, { onDelete: "CASCADE" })
+  @JoinColumn()
+  Category: Category;
 }

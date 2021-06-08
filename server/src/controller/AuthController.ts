@@ -20,7 +20,7 @@ class AuthController {
 
     console.log(req.body);
 
-    //console.log("Phone Number  : "+email+" Password : " + password+ " Type Account " +typeAccount);
+    console.log("email   : "+email+" Password : " + password+ " Type Account " +typeAccount);
     if (!(email && password && typeAccount)) {
       res.status(400).send();
     }
@@ -168,27 +168,32 @@ class AuthController {
 
   static sendRequestCode = async (req: Request, res: Response) => {
     //Get parameters from the body
-    let { phoneNumber } = req.body;
+    let { phoneNumber,email } = req.body;
     let client: Client;
+    var number=parseInt(phoneNumber);
     const clientRepository = getRepository(Client);
     client = await clientRepository.findOne({
-      where: { phoneNumber: phoneNumber, verified: false },
+      where: { email: email, verified: false },
     });
 
     if (client) {
       console.log("Exist");
       let requestcode = randomize("0", 4);
       client.requestCode = requestcode;
-
+      client.phoneNumber = number;
+      var minutesToAdd=60;
+      var currentDate = new Date();
+      var futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+      client.requestCodeEndDate = futureDate;
       try {
         await clientRepository.save(client);
-        clientTwilio.messages
+      /*  clientTwilio.messages
           .create({
-            body: "Open fidelity app and  use your code " + requestcode,
-            from: "+12058131475",
+            body: "Open Nurture Cosmetic App and use your code " + requestcode,
+            from: "+13344871567",
             to: "+216" + phoneNumber,
           })
-          .then((message) => console.log(message.sid));
+          .then((message) => console.log(message.sid));*/
       } catch (e) {
         res.status(400).send("a problem has been occured in saving client");
         return;
@@ -196,69 +201,121 @@ class AuthController {
       res.status(201).send("New request code is sent");
       return;
     } else {
-      client = new Client();
-      console.log("doestnexist");
-      client.phoneNumber = phoneNumber;
+      
+      res.status(404).send("Client not found.");
+      console.log("Client not found");
+    
+    }
+  };
+
+  static resendRequestCode = async (req: Request, res: Response) => {
+    //Get parameters from the body
+    let { email } = req.body;
+    let client: Client;
+    const clientRepository = getRepository(Client);
+    client = await clientRepository.findOne({
+      where: { email: email, verified: false },
+    });
+
+    if (client) {
+      console.log("Exist");
       let requestcode = randomize("0", 4);
       client.requestCode = requestcode;
-      client.role = "CLIENT";
-
+      var minutesToAdd=60;
+      var currentDate = new Date();
+      var futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+      client.requestCodeEndDate = futureDate;
       try {
         await clientRepository.save(client);
-        clientTwilio.messages
+      /*  clientTwilio.messages
           .create({
-            body: "Open fidelity app and  use your code " + requestcode,
-            from: "+12058131475",
-            to: "+216" + phoneNumber,
+            body: "Open Nurture Cosmetic App and use your code " + requestcode,
+            from: "+13344871567",
+            to: "+216" + client.phoneNumber,
           })
-          .then((message) => console.log(message.sid));
-        res.status(201).send("New client saved Now enter verify Code");
+          .then((message) => console.log(message.sid));*/
       } catch (e) {
-        res.status(401).send("Phone Number already in use");
+        res.status(400).send("a problem has been occured in saving client");
         return;
       }
-
-      console.log("Message sent");
-      //If all ok, send 201 response
+      res.status(201).send("New request code is sent");
+      return;
+    } else {
+      
+      res.status(404).send("Client not found.");
+      console.log("Client not found");
+    
     }
+  };
 
-    //Validade if the parameters are ok
-    /*    const errors = await validate(client);
-       if (errors.length > 0) {
-         res.status(400).send(errors);
-         return;
-       } */
+  static newAccount = async (req: Request, res: Response) => {
+    //Get parameters from the body
+    // just send date in english format  (YYYY/MM/dd)
+    let { firstName, lastName,email, password, birthDate,sexe  } = req.body;
+    
+    const clientRepository = getRepository(Client);
+    
 
-    //Try to save. If fails, the phoneNumber is already in use
+    console.log(firstName, lastName, password, email,birthDate,sexe)
+      let client = new Client();
+      client.firstName = firstName;
+      client.lastName = lastName;
+      client.email = email;
+      client.birthDate = birthDate;
+      client.password = password;
+      client.sexe = sexe;
+      client.role = "CLIENT";
+
+      //Validade if the parameters are ok
+    const errors = await validate(client);
+    if (errors.length > 0) {
+      res.status(400).send(errors);
+      return;
+    }
+    //Hash the password, to securely store on DB
+    client.hashPassword();
+    //Try to save. If fails, the email is already in use
+    try {
+      await clientRepository.save(client);
+    } catch (e) {
+      res.status(409).send("Email already in use");
+      return;
+    }
+    //If all ok, send 201 response
+    res.sendStatus(201);
+     
+    
   };
 
   
 
   //! VerifyCode Function
-  static checkRequstCode = async (req: Request, res: Response) => {
+  static checkRequestCode = async (req: Request, res: Response) => {
     //Get values from the body
-    const { phoneNumber, requestCode } = req.body;
+    const { email, requestCode } = req.body;
     let client: Client;
     //Try to find client on database
     const clientRepository = getRepository(Client);
 
     try {
       client = await clientRepository.findOneOrFail({
-        where: { phoneNumber: phoneNumber, verified: false },
+        where: { email: email, verified: false },
       });
     } catch (error) {
-      res.status(400).send("Please verify your phone Number");
+      res.status(400).send("Please verify your email");
       return;
     }
-    if (client.requestCode == requestCode) {
+    if (client.requestCode == requestCode && AuthController.compareDate(new Date(),client.requestCodeEndDate)!=1) {
       client.requestCode = null;
       client.verified = true;
       clientRepository.save(client);
       console.log(client);
       res.status(200).send("Code verified");
       return;
-    } else {
-      res.status(403).send("Please verify code");
+    } else if (client.requestCode != requestCode) {
+      res.status(403).send("Please verify Code.");
+    }else {
+      res.status(405).send("Request Code Expired.");
     }
   };
 

@@ -27,14 +27,11 @@ export abstract class User {
   @Column({ nullable: true })
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 
-  @Column({ unique: true })
-  @IsInt()
-  @Max(99999999)
-  @Min(10000000)
+  @Column({ nullable: true  })
   phoneNumber: number;
 
   @Column("datetime", { nullable: true })
@@ -57,9 +54,10 @@ export abstract class User {
 
   @Column()
   role: string;
+  @Column()
+  sexe: string;
 
-  @Column({ nullable: true })
-  city: string;
+
 
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 8);

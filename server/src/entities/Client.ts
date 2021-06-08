@@ -25,9 +25,6 @@ export class Client extends User {
   requestCodeEndDate: Date;
 
   @Column({ nullable: true })
-  Image: string;
-
-  @Column({ nullable: true })
   notificationToken: string;
 
   @OneToMany(() => Notification, (notification) => notification.id)
