@@ -6,10 +6,12 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbCardModule, NbSelectModule, NbTreeGridModule, NbListModule, NbIconModule, NbAlertModule, NbInputModule, NbButtonModule, NbSpinnerModule, NbUserModule } from '@nebular/theme';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ThemeModule } from '../../@theme/theme.module';
+import { ListCategoriesComponent } from './list-categories/list-categories.component';
+import { AffectProduitCategorieComponent } from './affect-produit-categorie/affect-produit-categorie.component';
 
 
 @NgModule({
-  declarations: [ ...routedComponents,],
+  declarations: [ ...routedComponents, ListCategoriesComponent, AffectProduitCategorieComponent,],
   imports: [
     CommonModule,
     CategoriesRoutingModule,
