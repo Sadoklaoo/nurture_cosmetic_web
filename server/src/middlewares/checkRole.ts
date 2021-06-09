@@ -19,12 +19,12 @@ export const checkRole = (roles: Array<string>) => {
       try {
         admin = await adminRepository.findOneOrFail(id);
       } catch (id) {
-        res.status(401).send();
+        res.status(401).send("Admin repo failed");
       }
 
       //Check if array of authorized roles includes the user's role
       if (roles.indexOf(admin.role) > -1) next();
-      else res.status(401).send();
+      else res.status(401).send("Admin roles failed");
     } else {
       //Get user role from the database
 
@@ -34,12 +34,12 @@ export const checkRole = (roles: Array<string>) => {
       try {
         client = await clientRepository.findOneOrFail(id);
       } catch (id) {
-        res.status(401).send();
+        res.status(401).send("Client repo failed");
       }
 
       //Check if array of authorized roles includes the user's role
       if (roles.indexOf(client.role) > -1) next();
-      else res.status(401).send();
+      else res.status(401).send("Admin roles failed");
     }
   };
 };
