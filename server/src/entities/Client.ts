@@ -39,8 +39,7 @@ export class Client extends User {
   @OneToMany(() => History, (History) => History.Client)
   History: History[];
 
-  @OneToOne(() => Skin)
-  @JoinColumn()
+  @OneToOne(() => Skin,(skin)=>skin.Client)
   Skin: Skin;
 
   

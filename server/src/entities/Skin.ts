@@ -7,8 +7,8 @@ import {
   OneToMany,
   ManyToOne
   } from "typeorm";
+import { Client } from "./Client";
 import { User } from "./User";
-
 
   
   @Entity()
@@ -21,7 +21,7 @@ import { User } from "./User";
     SkinDescription: string;
   
     @Column()
-    SkinType: string;
+    SkinType: SkinTypes;
 
     @Column({ type: "float" })
     Nature: number;
@@ -41,9 +41,20 @@ import { User } from "./User";
     @Column({ type: "float" })
     AntiAge: number;
 
+    @OneToOne(() => Client, (client) => client.Skin)
+    @JoinColumn()
+    Client:Client
+    
   
   }
   
+  enum SkinTypes {
+    Normal="NORMAL",
+    Dry="DRY",
+    Oily="OILY",
+    Combination="COMBINATION"
+
+  }
   
   
   
