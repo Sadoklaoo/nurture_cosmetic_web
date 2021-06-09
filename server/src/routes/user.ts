@@ -1,0 +1,48 @@
+import { Router } from "express";
+
+import { checkJwt } from "../middlewares/checkJwt";
+import { checkRole } from "../middlewares/checkRole";
+
+const router = Router();
+
+//*************************** ADMIN **********************//
+
+//Get Current  Admin  Details with TOKEN
+router.post("/admin/me",[checkJwt, checkRole(["ADMIN"])] );
+
+
+
+
+//*************************** CLIENT **********************//
+//delete client
+router.delete("/clients/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
+
+//get client with ID
+router.get("/clients/getwithid",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
+
+//get client with email
+router.get("/clients/getwithemail",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
+
+//get all clients
+router.get("/clients/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//Get Current  Client  Details with TOKEN
+router.post("/clients/me",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//Get Current  Client  history
+router.post("/clients/me/history",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//Get Current  Client  allergies
+router.post("/clients/me/allergies",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//Get Current  Client  skintype
+router.post("/clients/me/skintype",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//Contact us
+router.post("/clients/me/contact",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+//update tokenApp for a client
+router.post("/clients/me/updateToken",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+
+
+export default router;
