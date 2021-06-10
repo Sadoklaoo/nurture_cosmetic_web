@@ -1,26 +1,29 @@
 import { Router } from "express";
+import SkinController from "../controller/SkinController";
+import { Skin } from "../entities/Skin";
 
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
-//insert ingredient
-router.post("/add",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+//insert skin
+router.post(
+  "/addOrEdit",
+  [checkJwt, checkRole(["CLIENT"])],
+  SkinController.addOrEdit
+);
 
-//delete ingredient
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])]  );
+//delete skin
+router.delete(
+  "/delete/:id([0-9]+)",
+  [checkJwt, checkRole(["ADMIN", "CLIENT"])],
+  SkinController.delete
+);
 
-//edit ingredient
-router.post("/edit",[checkJwt, checkRole(["ADMIN","CLIENT"])]  );
+//get skin
+router.get("/get", [checkJwt, checkRole(["CLIENT"])], SkinController.get);
 
-//get ingredient
-router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
-
-
-//get all ingredients
-router.get("/getAll",[checkJwt, checkRole(["ADMIN"])] );
-
-
-
+//get all skins
+router.get("/getAll", [checkJwt, checkRole(["ADMIN"])], SkinController.getAll);
 
 export default router;
