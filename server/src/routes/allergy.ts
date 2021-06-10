@@ -1,24 +1,28 @@
 import { Router } from "express";
+import AllergyController from "../controller/AllergyController";
 
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
 //insert allergie
-router.post("/add",[checkJwt, checkRole(["ADMIN"])] );
+router.post("/add",[checkJwt, checkRole(["CLIENT"])], AllergyController.add );
+
+//insert allergie
+router.post("/addAdmin",[checkJwt, checkRole(["ADMIN"])], AllergyController.addAdmin );
 
 //delete allergie
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
+router.delete("/delete",[checkJwt, checkRole(["CLIENT"])], AllergyController.delete  );
 
 //edit allergie
 router.post("/edit",[checkJwt, checkRole(["ADMIN"])]  );
 
-//get allergie
-router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
+//get my allergies
+router.get("/getMyAllergies",[checkJwt, checkRole(["CLIENT"])]);
 
 
 //get all allergie
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/getAll",[checkJwt, checkRole(["ADMIN"])] );
 
 
 

@@ -15,14 +15,8 @@ export class Allergy {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({nullable:true})
   AllergyName: string;
-
-  @Column()
-  AllergyDescription: string;
-
-  @Column()
-  Image: string;
 
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })
   @JoinColumn()
