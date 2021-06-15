@@ -4,6 +4,7 @@ import { validate } from "class-validator";
 
 import { Client } from "../entities/Client";
 import { Allergy } from "../entities/Allergy";
+import { isNullOrUndefined, print } from "util";
 
 class AllergyController {
   static add = async (req: Request, res: Response) => {
@@ -104,7 +105,38 @@ class AllergyController {
       res.status(410).send("Allergy Found");
     }
   };
-  static getMyAllergies = async (req: Request, res: Response) => {};
+  static getMyAllergies = async (req: Request, res: Response) => {
+    let { clientId } = req.body;
+
+    const AllergyRepository = getRepository(Allergy);
+    const ClientRepository = getRepository(Client);
+    let myallergies;
+    let client: Client;
+    try {
+      client = await ClientRepository.findOneOrFail({
+        where: { id: clientId },
+      });
+    } catch (error) {
+      res.status(404).send("Client not found");
+      return;
+    }
+
+    try {
+       myallergies = await AllergyRepository.find({
+        where: { client: clientId },
+      });
+      
+    } catch (error) {
+      res.status(404).send("Allergie repo error.");
+      return;
+    }
+    if(myallergies){
+      res.send(myallergies);
+    }else{
+      res.status(404).send("No allergies.");
+    }
+
+  };
   
   static delete = async (req: Request, res: Response) => {
     let { AllergyName, clientId } = req.body;
@@ -155,6 +187,24 @@ class AllergyController {
     
   };
 
-  static getAll = async (req: Request, res: Response) => {};
+  static getAll = async (req: Request, res: Response) => {
+    //Get allergies from database
+    const AllergyRepository = getRepository(Allergy);
+    const allergies = await AllergyRepository.find({relations: ["client"]
+    });
+
+    let adminallergies : Array<Allergy> = [];
+
+    allergies.forEach( (element) => {
+
+      if(element.client==null){
+        adminallergies.push(element) ;
+        
+      }
+    });
+    
+    //Send the allergies object
+    res.send(adminallergies);
+  };
 }
 export default AllergyController;

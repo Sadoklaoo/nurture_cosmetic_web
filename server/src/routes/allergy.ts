@@ -18,11 +18,11 @@ router.delete("/delete",[checkJwt, checkRole(["CLIENT"])], AllergyController.del
 router.post("/edit",[checkJwt, checkRole(["ADMIN"])]  );
 
 //get my allergies
-router.get("/getMyAllergies",[checkJwt, checkRole(["CLIENT"])]);
+router.post("/getMyAllergies",[checkJwt, checkRole(["CLIENT"])], AllergyController.getMyAllergies);
 
 
 //get all allergie
-router.get("/getAll",[checkJwt, checkRole(["ADMIN"])] );
+router.get("/getAll",[checkJwt, checkRole(["ADMIN"])],AllergyController.getAll );
 
 
 
