@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToOne,
+  CreateDateColumn,
   JoinColumn,
   ManyToMany,
   JoinTable,
@@ -22,6 +23,10 @@ export class History {
   @ManyToMany(() => Product)
   @JoinTable({name: 'history_consulted',})
   ConsultedProducts: Product[];
+
+  @Column()
+  @CreateDateColumn()
+  consultedAt: Date;
 
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })
   @JoinColumn()
