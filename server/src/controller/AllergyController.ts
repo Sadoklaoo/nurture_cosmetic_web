@@ -105,6 +105,30 @@ class AllergyController {
       res.status(410).send("Allergy Found");
     }
   };
+
+  static editAdmin = async (req: Request, res: Response) => {
+    let { AllergyName,NewAllergyName} = req.body;
+
+    const AllergyRepository = getRepository(Allergy);
+
+    
+    try {
+      const allallergies = await AllergyRepository.find({
+        where: { AllergyName: AllergyName },
+      });
+      allallergies.forEach(async (element) => {
+        element.AllergyName = NewAllergyName;
+        await  AllergyRepository.save(element);
+      });
+      res.status(200).send("Allergy Updated.");
+    } catch (error) {
+      res.status(404).send("Client Doesn't have allergies");
+      return;
+    }
+
+   
+  };
+
   static getMyAllergies = async (req: Request, res: Response) => {
     let { clientId } = req.body;
 
@@ -206,5 +230,7 @@ class AllergyController {
     //Send the allergies object
     res.send(adminallergies);
   };
+
+
 }
 export default AllergyController;

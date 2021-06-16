@@ -15,11 +15,10 @@ router.post("/addAdmin",[checkJwt, checkRole(["ADMIN"])], AllergyController.addA
 router.delete("/delete",[checkJwt, checkRole(["CLIENT"])], AllergyController.delete  );
 
 //edit allergie
-router.post("/edit",[checkJwt, checkRole(["ADMIN"])]  );
+router.post("/edit",[checkJwt, checkRole(["ADMIN"])] , AllergyController.editAdmin );
 
 //get my allergies
 router.post("/getMyAllergies",[checkJwt, checkRole(["CLIENT"])], AllergyController.getMyAllergies);
-
 
 //get all allergie
 router.get("/getAll",[checkJwt, checkRole(["ADMIN"])],AllergyController.getAll );
