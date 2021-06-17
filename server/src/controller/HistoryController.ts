@@ -8,34 +8,80 @@ import { History } from "../entities/History";
 import { Product } from "../entities/Product";
 import { Client } from "../entities/Client";
 
-
- class HistoryController{
+class HistoryController {
   static add = async (req: Request, res: Response) => {
-    let { SearchString, ProductId,ClientId } = req.body;
-    let history = new History();
-    history.SearchString = SearchString;
+    let { SearchString, ProductId, clientId } = req.body;
+
     const ProductRepository = getRepository(Product);
     const ClientRepository = getRepository(Client);
     const HistoryRepository = getRepository(History);
-
+    let exist = false;
     let client: Client;
     let product: Product;
+    let history: History;
+    let newHistory = new History();
     try {
-      client = await ClientRepository.findOneOrFail(ClientId);
-      history.Client = client;
+      history = await HistoryRepository.findOne({ where: { SearchString: SearchString } });
+      if (history) {
+        exist = true;
+        console.log("History Found");
+      }
     } catch (error) {
-      res.status(404).send("client not found.");
+      res.status(403).send("History repo error.");
       return;
     }
-    try {
-      product = await ProductRepository.findOneOrFail(ClientId);
-    //  history = product;
-    } catch (error) {
-      res.status(404).send("client not found.");
-      return;
+
+    if (!exist) {
+      newHistory.SearchString = SearchString;
+
+      try {
+        client = await ClientRepository.findOneOrFail(clientId);
+        newHistory.Client = client;
+      } catch (error) {
+        res.status(404).send("Client not found.");
+        return;
+      }
+
+      try {
+        product = await ProductRepository.findOneOrFail(ProductId);
+        //  history = product;
+        newHistory.ConsultedProducts.push(product);
+      } catch (error) {
+        res.status(404).send("Product not found.");
+        return;
+      }
+
+      try {
+        await HistoryRepository.save(newHistory);
+      } catch (error) {
+        res.status(520).send("Insertion error.");
+        return;
+      }
+
+      res.status(201).send("New History inserted.");
+    }else{
+
+      try {
+        product = await ProductRepository.findOneOrFail(ProductId);
+        //  history = product;
+        history.ConsultedProducts.push(product);
+      } catch (error) {
+        res.status(404).send("Product not found.");
+        return;
+      }
+
+      try {
+        await HistoryRepository.save(history);
+      } catch (error) {
+        res.status(520).send("Insertion error.");
+        return;
+      }
+
+      res.status(201).send("History Product inserted.");
+
     }
-    //If all ok, send 201 response
-    res.status(201).send("Category inserted.");
+
+    
   };
-};
+}
 export default HistoryController;
