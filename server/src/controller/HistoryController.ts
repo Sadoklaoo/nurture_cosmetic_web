@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository,Raw } from "typeorm";
 import { validate } from "class-validator";
 import { Admin } from "../entities/Admin";
 import * as jwt from "jsonwebtoken";
@@ -20,8 +20,17 @@ class HistoryController {
     let product: Product;
     let history: History;
     let newHistory = new History();
+    var minutes=5;
+    var currentDate = new Date();
+    var previousDate = new Date(currentDate.getTime() - minutes*60000);
+
+
     try {
-      history = await HistoryRepository.findOne({ where: { SearchString: SearchString } });
+      history = await HistoryRepository.findOne({ where: { 
+        SearchString: SearchString ,
+        consultedAt: Raw(alias =>`${alias} >= ':date'`, { date: previousDate })
+      } 
+      });
       if (history) {
         exist = true;
         console.log("History Found");
