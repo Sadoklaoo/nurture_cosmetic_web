@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository,Raw } from "typeorm";
+import { getRepository, Raw } from "typeorm";
 import { validate } from "class-validator";
 import { Admin } from "../entities/Admin";
 import * as jwt from "jsonwebtoken";
@@ -7,6 +7,7 @@ import config from "../config/config";
 import { History } from "../entities/History";
 import { Product } from "../entities/Product";
 import { Client } from "../entities/Client";
+import { Console } from "console";
 
 class HistoryController {
   static add = async (req: Request, res: Response) => {
@@ -20,45 +21,59 @@ class HistoryController {
     let product: Product;
     let history: History;
     let newHistory = new History();
-    var minutes=5;
+    var minutes = 5;
     var currentDate = new Date();
-    var previousDate = new Date(currentDate.getTime() - minutes*60000);
+    var previousDate = new Date(currentDate.getTime() - minutes * 60000);
+    console.log(currentDate);
+    console.log(previousDate);
+    //Client Search
+    try {
+      client = await ClientRepository.findOneOrFail(clientId);
+    } catch (error) {
+      res.status(404).send("Client not found.");
+      return;
+    }
 
+    // Product Search
+    try {
+      product = await ProductRepository.findOneOrFail(ProductId);
+      //  history = product;
+    } catch (error) {
+      res.status(404).send("Product not found.");
+      return;
+    }
+    // History Search
 
     try {
-      history = await HistoryRepository.findOne({ where: { 
-        SearchString: SearchString ,
-        consultedAt: Raw(alias =>`${alias} >= ':date'`, { date: previousDate })
-      } 
+      console.log(previousDate.toISOString().slice(0, 19).replace("T", " "));
+      history = await HistoryRepository.findOne({
+        where: {
+          SearchString: SearchString,
+          Client: clientId,
+          //  consultedAt: Raw(alias =>`${alias} >= :date `, { date: previousDate.toISOString().slice(0, 19).replace('T', ' ')}),
+          consultedAt: Raw(
+            (alias) => `TIMESTAMPDIFF(MINUTE,${alias} , NOW())<5`
+          ),
+        },
+        relations: ["ConsultedProducts"],
       });
+
       if (history) {
         exist = true;
+        // res.status(200).send(history);
         console.log("History Found");
+      } else {
+        console.log("History Not Found");
       }
     } catch (error) {
-      res.status(403).send("History repo error.");
+      res.status(403).send(error);
       return;
     }
 
     if (!exist) {
       newHistory.SearchString = SearchString;
-
-      try {
-        client = await ClientRepository.findOneOrFail(clientId);
-        newHistory.Client = client;
-      } catch (error) {
-        res.status(404).send("Client not found.");
-        return;
-      }
-
-      try {
-        product = await ProductRepository.findOneOrFail(ProductId);
-        //  history = product;
-        newHistory.ConsultedProducts.push(product);
-      } catch (error) {
-        res.status(404).send("Product not found.");
-        return;
-      }
+      newHistory.Client = client;
+      newHistory.ConsultedProducts = [product];
 
       try {
         await HistoryRepository.save(newHistory);
@@ -68,14 +83,13 @@ class HistoryController {
       }
 
       res.status(201).send("New History inserted.");
-    }else{
-
+    } else {
       try {
-        product = await ProductRepository.findOneOrFail(ProductId);
-        //  history = product;
+        console.log("TEST");
+        console.log(history.ConsultedProducts.length);
         history.ConsultedProducts.push(product);
       } catch (error) {
-        res.status(404).send("Product not found.");
+        res.status(404).send(error);
         return;
       }
 
@@ -87,10 +101,35 @@ class HistoryController {
       }
 
       res.status(201).send("History Product inserted.");
+    }
+  };
 
+  static getAll = async (req: Request, res: Response) => {
+    let { clientId } = req.body;
+
+    const ClientRepository = getRepository(Client);
+    const HistoryRepository = getRepository(History);
+    let client: Client;
+    let clientHistory: History[];
+
+    try {
+      client = await ClientRepository.findOneOrFail(clientId);
+    } catch (error) {
+      res.status(404).send("Client not found.");
+      return;
     }
 
-    
+    try {
+      clientHistory = await HistoryRepository.find({
+        where: { Client: clientId },
+        relations: ["ConsultedProducts"],
+      });
+
+      res.status(200).send(clientHistory);
+    } catch (error) {
+      res.status(404).send("Histories not found.");
+      return;
+    }
   };
 }
 export default HistoryController;

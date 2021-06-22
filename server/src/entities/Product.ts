@@ -49,6 +49,7 @@ export class Product {
   @JoinTable({name: 'product_ingredients',})
   ProductIngredients: Ingredient[];
 
+
   @ManyToOne((category) => Category, { onDelete: "CASCADE" })
   @JoinColumn()
   Category: Category;

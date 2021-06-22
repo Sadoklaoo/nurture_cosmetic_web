@@ -5,21 +5,14 @@ import { checkJwt } from "../middlewares/checkJwt";
 import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
-//insert categorie
+//insert history
 router.post("/add",[checkJwt, checkRole(["CLIENT"])], HistoryController.add );
 
-//delete categorie
+//delete history
 router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
 
-//edit categorie
-router.post("/edit",[checkJwt, checkRole(["ADMIN"])]  );
-
-//get categorie
-router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
-
-
-//get all categories
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+//get all historys
+router.get("/getAll",[checkJwt, checkRole(["CLIENT"])] );
 
 
 
