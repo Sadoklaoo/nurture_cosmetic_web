@@ -9,10 +9,10 @@ const router = Router();
 router.post("/add",[checkJwt, checkRole(["CLIENT"])], HistoryController.add );
 
 //delete history
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
+router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["CLIENT"])] , HistoryController.delete );
 
 //get all historys
-router.get("/getAll",[checkJwt, checkRole(["CLIENT"])] );
+router.get("/getAll",[checkJwt, checkRole(["CLIENT"])],HistoryController.getAll );
 
 
 

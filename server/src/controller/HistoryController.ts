@@ -131,5 +131,22 @@ class HistoryController {
       return;
     }
   };
+
+  static delete = async (req: Request, res: Response) => {
+    //Get the ID from the url
+    const id = req.params.id;
+    const HistoryRepository = getRepository(History);
+    let history: History;
+    try {
+      history = await HistoryRepository.findOneOrFail(id);
+    } catch (error) {
+      res.status(404).send("History not found.");
+      return;
+    }
+    HistoryRepository.delete(id);
+    //After all send a 204 (no content, but accepted) response
+    res.status(200).send("History deleted.");
+  };
+  
 }
 export default HistoryController;
