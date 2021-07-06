@@ -120,5 +120,16 @@ class SkinController {
     //Send the users object
     res.send(skins);
   };
+  static getmyAll = async (req: Request, res: Response) => {
+    let { clientId } = req.body;
+    //Get Skins from database
+    const SkinRepository = getRepository(Skin);
+    const skins = await SkinRepository.find({
+      where: { Client: clientId },
+    });
+
+    //Send the users object
+    res.send(skins);
+  };
 }
 export default SkinController;

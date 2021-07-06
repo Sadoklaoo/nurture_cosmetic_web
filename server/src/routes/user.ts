@@ -1,5 +1,9 @@
 import { Router } from "express";
 import AdminController from "../controller/AdminController";
+import AllergyController from "../controller/AllergyController";
+import HistoryController from "../controller/HistoryController";
+import SkinController from "../controller/SkinController";
+import UserController from "../controller/UserController";
 
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkRole } from "../middlewares/checkRole";
@@ -23,34 +27,37 @@ router.delete("/admins/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],AdminContro
 
 //*************************** CLIENT **********************//
 //delete client
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
+router.delete("/clients/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],UserController.deleteuser  );
 
 //get client with ID
-router.get("/getwithid",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
+router.get("/clients/getwithid",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.getOneById);
 
 //get client with email
-router.get("/getwithemail",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
+router.get("/clients/getwithemail",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.getOneByEmail);
 
 //get all clients
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/clients/getAll",[checkJwt, checkRole(["ADMIN"])],UserController.listAll );
 
 //Get Current  Client  Details with TOKEN
-router.post("/me",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/me",[checkJwt, checkRole(["CLIENT"])],UserController.me );
 
 //Get Current  Client  history
-router.post("/me/history",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/me/history",[checkJwt, checkRole(["CLIENT"])], HistoryController.getAll);
 
 //Get Current  Client  allergies
-router.post("/me/allergies",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/me/allergies",[checkJwt, checkRole(["CLIENT"])], AllergyController.getMyAllergies );
 
 //Get Current  Client  skintype
-router.post("/me/skintype",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/me/skintype",[checkJwt, checkRole(["CLIENT"])], SkinController.getmyAll  );
 
 //Contact us
-router.post("/me/contact",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.post("/me/contact",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.clientContact  );
 
 //update tokenApp for a client
-router.post("/me/updateToken",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.post("/me/updateToken",[checkJwt, checkRole(["ADMIN","CLIENT"])], UserController.updateClientTokenApp );
+
+//update client Data
+router.put("/clients/edit",[checkJwt, checkRole(["ADMIN","CLIENT"])], UserController.editClient );
 
 
 export default router;
