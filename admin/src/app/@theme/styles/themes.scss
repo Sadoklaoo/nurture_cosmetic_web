@@ -2,7 +2,24 @@
 @import '~@nebular/theme/styles/theming';
 // @nebular out of the box themes
 @import '~@nebular/theme/styles/themes';
+@import '~@nebular/theme/styles/themes/dark';
 
+$nb-themes: nb-register-theme((
+
+
+
+  color-primary-100: white,
+  color-primary-200: #e3e7ea,
+  color-primary-300: #c7cfd5,
+  color-primary-400: #acb8c0,
+  color-primary-500: #92a1ac,
+  color-primary-600: #788b98,
+  color-primary-700: #5f7584,
+  color-primary-800: #466071,
+  color-primary-900: #2c4c5f,
+
+ 
+), aquamarine, default);
 $nb-themes: nb-register-theme((
   layout-padding-top: 2.25rem,
 

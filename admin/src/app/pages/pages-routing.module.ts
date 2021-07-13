@@ -11,14 +11,6 @@ const routes: Routes = [{
   component: PagesComponent,
   children: [
     {
-      path: 'dashboard',
-      component: ECommerceComponent,
-    },
-    {
-      path: 'iot-dashboard',
-      component: DashboardComponent,
-    },
-    {
       path: 'allergies',
       loadChildren: () => import('./allergies/allergies.module')
         .then(m => m.AllergiesModule),

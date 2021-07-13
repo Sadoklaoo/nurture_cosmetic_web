@@ -19,6 +19,7 @@ import {
   NbSidebarModule,
   NbToastrModule,
   NbWindowModule,
+  NbThemeModule,
 } from '@nebular/theme';
 
 
@@ -41,6 +42,8 @@ import {
     }),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
+    NbThemeModule.forRoot({ name: 'aquamarine' }),
+
   ],
   bootstrap: [AppComponent],
 })
