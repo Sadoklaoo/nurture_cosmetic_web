@@ -1,11 +1,12 @@
 import { Router } from "express";
+import ProductController from "../controller/ProductController";
 
 import { checkJwt } from "../middlewares/checkJwt";
 import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
 //insert product
-router.post("/add",[checkJwt, checkRole(["ADMIN"])] );
+router.post("/add",[checkJwt, checkRole(["ADMIN"])], ProductController.newProduct );
 
 //delete product
 router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]);
@@ -18,7 +19,7 @@ router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
 
 
 //get all products
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.listAllProducts );
 
 
 

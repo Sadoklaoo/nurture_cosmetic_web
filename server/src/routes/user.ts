@@ -30,7 +30,7 @@ router.delete("/admins/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],AdminContro
 router.delete("/clients/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],UserController.deleteuser  );
 
 //get client with ID
-router.get("/clients/getwithid",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.getOneById);
+router.get("/clients/getwithid/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.getOneById);
 
 //get client with email
 router.get("/clients/getwithemail",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.getOneByEmail);
@@ -51,10 +51,10 @@ router.get("/me/allergies",[checkJwt, checkRole(["CLIENT"])], AllergyController.
 router.get("/me/skintype",[checkJwt, checkRole(["CLIENT"])], SkinController.getmyAll  );
 
 //Contact us
-router.post("/me/contact",[checkJwt, checkRole(["ADMIN","CLIENT"])],UserController.clientContact  );
+router.post("/me/contact",[checkJwt, checkRole(["CLIENT"])],UserController.clientContact  );
 
 //update tokenApp for a client
-router.post("/me/updateToken",[checkJwt, checkRole(["ADMIN","CLIENT"])], UserController.updateClientTokenApp );
+router.post("/me/updateToken",[checkJwt, checkRole(["CLIENT"])], UserController.updateClientTokenApp );
 
 //update client Data
 router.put("/clients/edit",[checkJwt, checkRole(["ADMIN","CLIENT"])], UserController.editClient );

@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Category } from "./Category";
 import { Ingredient } from "./Ingredient";
+import { ProductType } from "./ProductType";
 
 @Entity()
 export class Product {
@@ -31,8 +32,9 @@ export class Product {
   @Column()
   Image: string;
 
-  @Column()
-  Type: string;
+  @ManyToMany(() => ProductType)
+  @JoinTable({name: 'product_types',})
+  Type: ProductType[];
 
   @Column()
   ProductDescription: string;

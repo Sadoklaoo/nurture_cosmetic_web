@@ -19,9 +19,12 @@ export class Contact {
   @Column()
   message: string;
 
-  @OneToOne(() => Admin, (admin) => admin.id)
-  @JoinColumn()
-  Manager: Admin;
+  @Column()
+  type: string;
+
+  @Column()
+  rate: number;
+
 
   @ManyToOne(() => Client, (client) => client.id, { nullable: true })
   @JoinColumn()

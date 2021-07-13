@@ -10,7 +10,7 @@ import { Contact } from "../entities/Contact";
 class UserController {
   static listAll = async (req: Request, res: Response) => {
     //Get users from database
-    const userRepository = getRepository(User);
+    const userRepository = getRepository(Client);
     const users = await userRepository.find({
       select: ["id", "email", "firstName", "lastName", "phoneNumber", "sexe"], //We dont want to send the passwords on response
     });
@@ -79,7 +79,7 @@ class UserController {
     const userRepository = getRepository(Client);
     try {
       // const user = await  userRepository.findOneOrFail({ phoneNumber });
-      const user = await userRepository.findOneOrFail(email, {
+      const user = await userRepository.findOneOrFail({email}, {
         select: ["id", "email", "firstName", "lastName", "phoneNumber", "sexe"], //We dont want to send the password on response
       });
       res.send(user);
@@ -150,8 +150,8 @@ class UserController {
 
   static clientContact = async (req: Request, res: Response) => {
     //Get the storeID,Message from request body
-    let { ClientId, Message } = req.body;
-    console.log(ClientId, Message);
+    let { ClientId, Message,type,rate } = req.body;
+    //console.log(ClientId, Message);
     //Get the repostories
     const clientRepository = getRepository(Client);
     const contactRepository = getRepository(Contact);
@@ -162,8 +162,10 @@ class UserController {
       client = await clientRepository.findOneOrFail({ where: { id: ClientId } })
       contactt.Client = client.id;
       contactt.message = Message;
+      contactt.type = type;
+      contactt.rate = rate;
       contactt = await contactRepository.save(contactt);
-      console.log(client)
+    //  console.log(client)
       res.status(200).send("Success message sent")
     } catch (error) {
 
@@ -202,16 +204,16 @@ class UserController {
 
   static editClient = async (req: Request, res: Response) => {
     //Get values from the body
-    const { firstName, lastName, phoneNumber, email, address, postalCode, birthDate, city, password, image } = req.body;
+    const { firstName, lastName, email, birthDate,  password } = req.body;
 
     //Try to find client on database
     const clientRepository = getRepository(Client);
     let client: Client;
     try {
-      client = await clientRepository.findOneOrFail({ where: { phoneNumber: phoneNumber } });
+      client = await clientRepository.findOneOrFail({ where: { email: email } });
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send("Client(Phone Number) not found");
+      res.status(404).send("Client(email) not found");
       console.log(error)
       return;
     }
@@ -219,7 +221,6 @@ class UserController {
     //client.phoneNumber=phoneNumber
     client.firstName = firstName;
     client.lastName = lastName;
-    client.email = email;
 
     // if Register   cad  password  exist
     // else continue cad profile edit
