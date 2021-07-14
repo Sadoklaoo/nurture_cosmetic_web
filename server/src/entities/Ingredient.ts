@@ -17,7 +17,7 @@ export class Ingredient {
   @Column()
   IngredientName: string;
 
-  @Column({ unique: true })
+  @Column()
   IngredientType: string;
 
   @ManyToMany(() => Allergy)

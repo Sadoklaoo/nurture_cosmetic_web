@@ -5,24 +5,35 @@ import { Admin } from "../entities/Admin";
 import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { Product } from "../entities/Product";
+import { ProductType } from "../entities/ProductType";
 
 class ProductController {
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
-    let { ProductName, Reference, Price,  Category, ProductDescription, ProductSecondDescription,ProductDimensions,PreferedSkinType,Type } =
-      req.body;
+    let {
+      ProductName,
+      Reference,
+      Price,
+      Category,
+      ProductDescription,
+      ProductSecondDescription,
+      ProductDimensions,
+      PreferedSkinType,
+      Image,
+      Type,
+    } = req.body;
     let product = new Product();
     product.ProductName = ProductName;
     product.Reference = Reference;
     product.Price = Price;
     product.Category = Category;
     product.Rank = 10;
-    product.Image = "logo.png";
+    product.Image = Image;
     product.ProductDescription = ProductDescription;
     product.PreferedSkinType = PreferedSkinType;
     product.ProductSecondDescription = ProductSecondDescription;
     product.ProductDimensions = ProductDimensions;
-   // product.Type = Type;
+    product.Type = Type;
 
     //Validade if the parameters are ok
     const errors = await validate(product);
@@ -30,7 +41,7 @@ class ProductController {
       res.status(400).send(errors);
       return;
     }
-   
+
     //Try to save. If fails, the phoneNumber is already in use
     const productRepository = getRepository(Product);
     try {
@@ -52,18 +63,47 @@ class ProductController {
     res.send(products);
   };
 
-  static listAllProductsWithIngredients = async (
-    req: Request,
-    res: Response
-  ) => {
-    //Get products from database
-    const productRepository = getRepository(Product);
-    const products = await productRepository.find({
-      relations: ["ProductIngredients"],
-    });
+  static listAllProductType = async (req: Request, res: Response) => {
+    //Get product types from database
+    const productRepository = getRepository(ProductType);
+    const products = await productRepository.find({});
 
     //Send the product object
     res.send(products);
+  };
+
+  static productDetail = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    let products;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    try {
+      products = await productRepository.findOneOrFail(id, {
+        relations: ["ProductIngredients"],
+      });
+    } catch (error) {
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static deleteProduct = async (req: Request, res: Response) => {
+    //Get the ID from the url
+    const id = req.params.id;
+    const productRepository = getRepository(Product);
+    let product: Product;
+    try {
+      product = await productRepository.findOneOrFail(id);
+    } catch (error) {
+      res.status(404).send("product not found");
+      return;
+    }
+    productRepository.delete(id);
+    //After all send a 204 (no content, but accepted) response
+    res.status(204).send();
   };
 
   /* static getOneById = async (req: Request, res: Response) => {

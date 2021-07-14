@@ -9,17 +9,20 @@ const router = Router();
 router.post("/add",[checkJwt, checkRole(["ADMIN"])], ProductController.newProduct );
 
 //delete product
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]);
+router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])], ProductController.deleteProduct);
 
-//delete product
+//edit product
 router.post("/edit",[checkJwt, checkRole(["ADMIN"])] );
-
-//get product
-router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
 
 
 //get all products
 router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.listAllProducts );
+
+//get all products
+router.get("/getAllTypes",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.listAllProductType );
+
+//get product
+router.get("/getProductDetail/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productDetail );
 
 
 
