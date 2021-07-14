@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  mar. 13 juil. 2021 à 13:43
+-- Généré le :  mer. 14 juil. 2021 à 13:33
 -- Version du serveur :  5.7.19
 -- Version de PHP :  5.6.31
 
@@ -73,8 +73,13 @@ CREATE TABLE IF NOT EXISTS `allergy` (
 --
 
 INSERT INTO `allergy` (`id`, `AllergyName`, `clientId`) VALUES
-(23, 'test2', NULL),
-(25, 'sadok', NULL),
+(1, 'Fragrance', NULL),
+(2, 'Parabens', NULL),
+(3, 'Sulfates', NULL),
+(4, 'Dyes', NULL),
+(5, 'Benzyl Alcohol', NULL),
+(6, 'Propylene Glycol', NULL),
+(7, 'Essential Oils', NULL),
 (26, 'sadok', 1);
 
 -- --------------------------------------------------------
@@ -235,9 +240,24 @@ CREATE TABLE IF NOT EXISTS `ingredient` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `IngredientName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `IngredientType` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_b3fe19a699cd7d20724c621f64` (`IngredientType`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `ingredient`
+--
+
+INSERT INTO `ingredient` (`id`, `IngredientName`, `IngredientType`) VALUES
+(1, 'Sodium Coco Sulfate', 'Neutral'),
+(2, 'Paraben', 'Medium'),
+(3, 'Cetyl alcohol', 'Low'),
+(4, 'Beeswax', 'Low'),
+(5, 'Decyl glucoside', 'Low'),
+(6, 'Citric acid', 'High'),
+(7, 'Aloe vera leaf gel', 'Low'),
+(8, 'Lavender oil', 'High'),
+(9, 'Jasmine oil', 'High'),
+(10, 'Saponified oil of palm', 'High');
 
 -- --------------------------------------------------------
 
@@ -253,6 +273,17 @@ CREATE TABLE IF NOT EXISTS `ingredient_trigered_allergy` (
   KEY `IDX_3cd89b9df91acbd18282c06931` (`ingredientId`),
   KEY `IDX_caec7456092b03523b9e59c90d` (`allergyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `ingredient_trigered_allergy`
+--
+
+INSERT INTO `ingredient_trigered_allergy` (`ingredientId`, `allergyId`) VALUES
+(2, 2),
+(6, 3),
+(8, 7),
+(9, 7),
+(10, 7);
 
 -- --------------------------------------------------------
 
@@ -293,7 +324,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_3e6ab09ae0f5e9d98fec19e63e` (`Reference`),
   KEY `FK_ff0c0301a95e517153df97f6812` (`categoryId`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Déchargement des données de la table `product`
@@ -302,7 +333,7 @@ CREATE TABLE IF NOT EXISTS `product` (
 INSERT INTO `product` (`id`, `ProductName`, `Reference`, `Price`, `Rank`, `Image`, `ProductDescription`, `ProductSecondDescription`, `ProductDimensions`, `PreferedSkinType`, `categoryId`) VALUES
 (1, 'Screen Cream', 'REF-PRO-001', 20, 15, '', 'sfsfsdf', 'dfsdfsdf', '12*10*06', 'Oiled', 1),
 (2, 'Parfum', 'REF-PRO-002', 30, 12, '', 'sfsfsdf', 'dfsdfsdf', '12*10*06', 'Normal', 1),
-(3, 'Khawla', 'Afli', 100, 10, 'logo.png', 'Sadok.laouissi@gmail.com', 'Sadok.laouissi@gmail.com', '1x2x3', 'Oiled', 1);
+(4, 'Khawla', 'Afli', 100, 10, 'Image', 'Sadok.laouissi@gmail.com', 'Sadok.laouissi@gmail.com', '1x2x3', 'Oiled', 1);
 
 -- --------------------------------------------------------
 
@@ -318,6 +349,20 @@ CREATE TABLE IF NOT EXISTS `product_ingredients` (
   KEY `IDX_0c47e7d54540edb8171ebe4e77` (`productId`),
   KEY `IDX_b40728e717eb031baa2e85371e` (`ingredientId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `product_ingredients`
+--
+
+INSERT INTO `product_ingredients` (`productId`, `ingredientId`) VALUES
+(1, 1),
+(1, 2),
+(1, 9),
+(2, 1),
+(2, 2),
+(2, 5),
+(2, 6),
+(2, 10);
 
 -- --------------------------------------------------------
 
@@ -358,6 +403,15 @@ CREATE TABLE IF NOT EXISTS `product_types` (
   KEY `IDX_6ee30c7f441b25c11565219327` (`productId`),
   KEY `IDX_55f9f57084243c545466ea7ffa` (`productTypeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `product_types`
+--
+
+INSERT INTO `product_types` (`productId`, `productTypeId`) VALUES
+(4, 1),
+(4, 2),
+(4, 3);
 
 -- --------------------------------------------------------
 
