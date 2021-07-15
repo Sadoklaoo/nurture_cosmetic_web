@@ -21,6 +21,9 @@ import {
   NbWindowModule,
   NbThemeModule,
 } from '@nebular/theme';
+import { AuthGuard } from './auth/auth-guard.service';
+import { NbAuthJWTToken, NbAuthModule, NbPasswordAuthStrategy } from '@nebular/auth';
+import { environment } from '../environments/environment';
 
 
 
@@ -43,6 +46,40 @@ import {
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
     NbThemeModule.forRoot({ name: 'aquamarine' }),
+    NbAuthModule.forRoot({
+      strategies:[
+        NbPasswordAuthStrategy.setup({
+          name:'email',
+          token : {
+            class: NbAuthJWTToken,
+            key:'token'
+          },
+          baseEndpoint: environment.base,
+          login : {
+            endpoint: environment.login,
+            method:'POST',
+            redirect : {
+              success:'/pages/allergies/list-allergies',
+              failure:null,
+            }
+          },
+          logout : {
+            redirect : {
+              success:'/auth/login',
+              failure:null,
+            }
+          }
+          
+        })
+      ],
+      forms: {logout: {
+        redirectDelay: 0,
+      },},
+    }),
+  ],
+  providers: [
+    // ...
+    AuthGuard,
 
   ],
   bootstrap: [AppComponent],

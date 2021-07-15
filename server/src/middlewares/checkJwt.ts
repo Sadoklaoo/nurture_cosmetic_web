@@ -6,7 +6,8 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   //Get the jwt token from the head
   const token = <string>req.headers["auth"];
   let jwtPayload;
-
+  console.log("token")
+  console.log(req.headers)
   //Try to validate the token and get data
   try {
     jwtPayload = <any>jwt.verify(token, config.jwtSecret);
@@ -19,8 +20,8 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
 
   //The token is valid for 1 hour
   //We want to send a new token on every request
-  const { userId, phoneNumber } = jwtPayload;
-  const newToken = jwt.sign({ userId, phoneNumber }, config.jwtSecret, {
+  const { userId, email } = jwtPayload;
+  const newToken = jwt.sign({ userId, email }, config.jwtSecret, {
     expiresIn: "100h",
   });
   res.setHeader("token", newToken);

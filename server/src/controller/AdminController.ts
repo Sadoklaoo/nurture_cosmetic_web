@@ -138,6 +138,7 @@ static deleteAdmin = async (req: Request, res: Response) => {
 static me = async (req: Request, res: Response) => {
   //Get the phoneNumber from request body
   const token = <string>req.headers["auth"];
+  
   let jwtPayload;
   try {
     jwtPayload = <any>jwt.verify(token, config.jwtSecret);
