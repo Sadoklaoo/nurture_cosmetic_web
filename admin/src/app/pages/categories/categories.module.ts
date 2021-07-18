@@ -8,10 +8,11 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ThemeModule } from '../../@theme/theme.module';
 import { ListCategoriesComponent } from './list-categories/list-categories.component';
 import { AffectProduitCategorieComponent } from './affect-produit-categorie/affect-produit-categorie.component';
-
+import { AddCategoryComponent } from './add-category/add-category.component';
+import { FormsModule as ngFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [ ...routedComponents, ListCategoriesComponent, AffectProduitCategorieComponent,],
+  declarations: [ ...routedComponents, ListCategoriesComponent, AffectProduitCategorieComponent, AddCategoryComponent,],
   imports: [
     CommonModule,
     CategoriesRoutingModule,
@@ -28,6 +29,7 @@ import { AffectProduitCategorieComponent } from './affect-produit-categorie/affe
     ThemeModule,
     Ng2SmartTableModule,
     NbUserModule,
+    ngFormsModule,
   ]
 })
 export class CategoriesModule { }

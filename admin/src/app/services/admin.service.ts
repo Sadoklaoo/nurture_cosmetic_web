@@ -19,7 +19,7 @@ export class AdminService {
       if (token.isValid()) {
         this.email = token.getPayload().sub;
         this.token = token.getValue();
-
+        
         //console.log(token.getValue())
         this.httpOptions = {
           headers: new HttpHeaders({
@@ -32,10 +32,7 @@ export class AdminService {
   }
 
   getCurrentAdmin() {
-    console.log(this.httpOptions.headers.keys());
-
-    //console.log("User service"+this.authService.getToken())
-    return this.http.post<Admin>(
+    return this.http.get<Admin>(
       environment.me,
       this.httpOptions
     );

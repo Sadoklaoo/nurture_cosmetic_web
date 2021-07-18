@@ -13,7 +13,7 @@ const router = Router();
 //*************************** ADMIN **********************//
 
 //Get Current  Admin  Details with TOKEN
-router.post("/admin/me",[checkJwt, checkRole(["ADMIN"])],AdminController.me );
+router.get("/admin/me",[checkJwt, checkRole(["ADMIN"])],AdminController.me );
 //Get all admins
 router.get("/admins",[checkJwt, checkRole(["ADMIN"])],AdminController.listAll);
 //New Admin

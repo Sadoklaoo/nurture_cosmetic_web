@@ -84,6 +84,10 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/pages/categories/list-categories',
       },
       {
+        title: 'Add category',
+        link: '/pages/categories/add-category',
+      },
+      {
         title: 'Affecter produit/categorie',
         link: '/pages/categories/affect-produit-categorie',
       },

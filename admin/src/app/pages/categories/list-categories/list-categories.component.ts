@@ -1,6 +1,10 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NbAuthJWTToken, NbAuthService } from '@nebular/auth';
 import { LocalDataSource } from 'ng2-smart-table';
 import { SmartTableData } from '../../../@core/data/smart-table';
+import { CategoryService } from '../../../services/category.service';
 
 @Component({
   selector: 'ngx-list-categories',
@@ -10,10 +14,8 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 export class ListCategoriesComponent implements OnInit {
 
   settings = {
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
+    actions:{
+      add:false,
     },
     edit: {
       editButtonContent: '<i class="nb-edit"></i>',
@@ -25,44 +27,54 @@ export class ListCategoriesComponent implements OnInit {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-      },
-      firstName: {
-        title: 'First Name',
+      CategoryName: {
+        title: 'Name',
         type: 'string',
       },
-      lastName: {
-        title: 'Last Name',
+      Image: {
+        editable: false,
+        title: 'Image',
         type: 'string',
-      },
-      username: {
-        title: 'Username',
-        type: 'string',
-      },
-      email: {
-        title: 'E-mail',
-        type: 'string',
-      },
-      age: {
-        title: 'Age',
-        type: 'number',
       },
     },
   };
   source: LocalDataSource = new LocalDataSource();
+  token: string;
+  httpOptions: { headers: HttpHeaders; };
+  categories: any;
 
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  constructor(private service: CategoryService,
+    private router: Router,
+    private http: HttpClient,
+    private authService: NbAuthService,) {
+    
+   
   }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    this.authService.onTokenChange().subscribe((token: NbAuthJWTToken) => {
+      if (token.isValid()) {
+        this.token = token.getValue();
+        this.httpOptions = {
+          headers: new HttpHeaders({
+            "Content-Type": "application/json",
+            "auth": this.token,
+          }),
+        };
+      }
+    });
+
+    this.service.listCategories().subscribe((response) => {
+      this.categories = response;
+      console.log(response);
+      this.source.load(this.categories);
+    });
   }
 
   onDeleteConfirm(event): void {
-    if (window.confirm('Are you sure you want to delete?')) {
+    console.log(event.data.idUser);
+    if (window.confirm("Are you sure you want to delete?")) {
+      console.log(event.data.idUser);
+      this.service.deleteCategory(event.data.idUser);
       event.confirm.resolve();
     } else {
       event.confirm.reject();

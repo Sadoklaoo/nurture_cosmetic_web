@@ -4,6 +4,23 @@ import { validate } from "class-validator";
 import { Category } from "../entities/Category";
 
 class CategoryController {
+
+
+
+  static updatePicture = async (Image,id ) => {
+    //Get the ID from the url
+    console.log("id : "+id);
+  
+    //Get the user from database
+    const categoryRepository = getRepository(Category);
+  
+      const category = await  categoryRepository.findOne({ id:id }); 
+      category.Image=Image;
+      await  categoryRepository.save(category);
+   
+  
+  };
+
   static add = async (req: Request, res: Response) => {
     let { CategoryName, Image } = req.body;
     let category = new Category();

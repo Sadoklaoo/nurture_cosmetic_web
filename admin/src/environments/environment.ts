@@ -13,5 +13,14 @@ export const environment = {
   base : 'http://localhost:3000',
   login : '/auth/loginweb',
   me : baseUrl + '/users/admin/me',
-  upload: baseUrl+'/fileupload/',
+  upload: baseUrl+'/uploads/',
+
+  // Users
+  getAllUsers: baseUrl+'/users/clients/getAll',
+
+  // Category
+  getAllCategory: baseUrl+'/category/getAll',
+  editCategory: baseUrl+'/category/edit',
+  deleteCategory: baseUrl+'/category/delete/',
+  addCategory: baseUrl+'/category/add',
 };
