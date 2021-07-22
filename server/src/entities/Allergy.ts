@@ -18,6 +18,9 @@ export class Allergy {
   @Column({nullable:true})
   AllergyName: string;
 
+  @Column()
+  Image: string;
+
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })
   @JoinColumn()
   client: Client;

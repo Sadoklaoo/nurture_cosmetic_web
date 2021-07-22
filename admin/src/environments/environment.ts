@@ -23,4 +23,10 @@ export const environment = {
   editCategory: baseUrl+'/category/edit',
   deleteCategory: baseUrl+'/category/delete/',
   addCategory: baseUrl+'/category/add',
+
+  // Allergy
+  getAllAllergy: baseUrl+'/allergy/getAll',
+  editAll: baseUrl+'/allergy/edit',
+  addAllergy: baseUrl+'/allegy/addAdmin',
+  
 };

@@ -7,6 +7,10 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true,
     children: [
       {
+        title: 'Add allergies',
+        link: '/pages/allergies/add-allergy',
+      },
+      {
         title: 'List allergies',
         link: '/pages/allergies/list-allergies',
       },

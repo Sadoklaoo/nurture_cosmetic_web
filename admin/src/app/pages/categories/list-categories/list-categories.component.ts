@@ -32,9 +32,11 @@ export class ListCategoriesComponent implements OnInit {
         type: 'string',
       },
       Image: {
-        editable: false,
+        editable:false,
         title: 'Image',
-        type: 'string',
+        type: 'html',
+        width:'15%',
+        valuePrepareFunction: (data) => { return '<img width="100%" height="100%" src= http://localhost:3000/images/'+ data +'>' }
       },
     },
   };

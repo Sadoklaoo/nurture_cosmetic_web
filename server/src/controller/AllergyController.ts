@@ -8,7 +8,7 @@ import { isNullOrUndefined, print } from "util";
 
 class AllergyController {
   static add = async (req: Request, res: Response) => {
-    let { AllergyName, clientId } = req.body;
+    let { AllergyName, clientId,Image } = req.body;
 
     const AllergyRepository = getRepository(Allergy);
     const ClientRepository = getRepository(Client);
@@ -43,6 +43,7 @@ class AllergyController {
     if (!found) {
       allergy.AllergyName = AllergyName;
       allergy.client = client;
+      allergy.Image = Image;
       const errors = await validate(allergy);
       if (errors.length > 0) {
         res.status(400).send(errors);
@@ -63,7 +64,7 @@ class AllergyController {
   };
 
   static addAdmin = async (req: Request, res: Response) => {
-    let { AllergyName } = req.body;
+    let { AllergyName,Image } = req.body;
 
     const AllergyRepository = getRepository(Allergy);
 
@@ -87,6 +88,7 @@ class AllergyController {
 
     if (!found) {
       allergy.AllergyName = AllergyName;
+      allergy.Image = Image;
       const errors = await validate(allergy);
       if (errors.length > 0) {
         res.status(400).send(errors);

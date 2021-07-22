@@ -1,6 +1,10 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NbAuthService } from '@nebular/auth';
 import { LocalDataSource } from 'ng2-smart-table';
 import { SmartTableData } from '../../../@core/data/smart-table';
+import { AllergyService } from '../../../services/allergy.service';
 
 @Component({
   selector: 'ngx-list-allergies',
@@ -9,10 +13,8 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 })
 export class ListAllergiesComponent implements OnInit {
   settings = {
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
+    actions:{
+      add:false,
     },
     edit: {
       editButtonContent: '<i class="nb-edit"></i>',
@@ -24,48 +26,51 @@ export class ListAllergiesComponent implements OnInit {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-      },
-      firstName: {
-        title: 'First Name',
+      AllergyName: {
+        title: 'Name',
         type: 'string',
       },
-      lastName: {
-        title: 'Last Name',
-        type: 'string',
-      },
-      username: {
-        title: 'Username',
-        type: 'string',
-      },
-      email: {
-        title: 'E-mail',
-        type: 'string',
-      },
-      age: {
-        title: 'Age',
-        type: 'number',
+      Image: {
+        editable:false,
+        title: 'Image',
+        type: 'html',
+        width:'5%',
+        valuePrepareFunction: (data) => { return '<img width="100%" height="100%" src= http://localhost:3000/images/'+ data +'>' }
       },
     },
   };
   source: LocalDataSource = new LocalDataSource();
-
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  token: string;
+  httpOptions: { headers: HttpHeaders; };
+  categories: any;
+  
+  constructor(private service: AllergyService,
+    private router: Router,
+    private http: HttpClient,
+    private authService: NbAuthService,) {
+    
+   
   }
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
       event.confirm.resolve();
+      console.log(event.data.idUser);
+     // this.service.deleteCategory(event.data.idUser);
     } else {
       event.confirm.reject();
     }
   }
 
   ngOnInit(): void {
+    
+
+    this.service.listAdminAllergy().subscribe((response) => {
+      this.categories = response;
+      console.log(response);
+      this.source.load(this.categories);
+    });
+
   }
 
 }
