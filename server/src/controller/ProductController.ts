@@ -6,7 +6,8 @@ import * as jwt from "jsonwebtoken";
 import config from "../config/config";
 import { Product } from "../entities/Product";
 import { ProductType } from "../entities/ProductType";
-
+import { IsNull } from "typeorm";
+import { Category } from "../entities/Category";
 class ProductController {
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
@@ -54,10 +55,88 @@ class ProductController {
     res.status(201).send("Product created");
   };
 
+
+  static setProductCategory = async (req: Request, res: Response) => {
+    let {
+      idProduct,
+      idCategory
+    } = req.body;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const categoryRepository = getRepository(Category);
+    let product;
+    let category;
+    try {
+      product  = await productRepository.findOneOrFail(idProduct,{
+        relations: ["Category"],
+      });
+    } catch (error) {
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    if (idCategory===null){
+      console.log("null Id")
+      product.Category = null;
+
+    }else{
+      try {
+        category  = await categoryRepository.findOneOrFail(idCategory);
+      } catch (error) {
+        res.status(404).send("Category not found");
+        return;
+      }
+      product.Category = category;
+    }
+
+    try {
+      await productRepository.save(product);
+    } catch (e) {
+      res.status(409).send("Product Update Error");
+      return;
+    }
+    //Send the product object
+    res.send(product);
+  };
+
   static listAllProducts = async (req: Request, res: Response) => {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({});
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static listAllProductsByCategoryId = async (req: Request, res: Response) => {
+    let {
+      id
+    } = req.body;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const products = await productRepository.find({
+      where: {
+        Category: {
+            id: id
+        }
+    }
+    });
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static listAllProductsWithoutCategory = async (req: Request, res: Response) => {
+   
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const products = await productRepository.find({
+      where: {
+        Category: {
+            id: IsNull()
+        }
+    }
+    });
 
     //Send the product object
     res.send(products);

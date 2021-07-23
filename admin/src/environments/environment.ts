@@ -23,6 +23,9 @@ export const environment = {
   editCategory: baseUrl+'/category/edit',
   deleteCategory: baseUrl+'/category/delete/',
   addCategory: baseUrl+'/category/add',
+  productsByCategory: baseUrl+'/category/getAllProductsByCategory',
+  productsWithoutCategory: baseUrl+'/category/getAllProductsWithoutCategory',
+  updateProductCategory: baseUrl+'/category/updateProductCategory',
 
   // Allergy
   getAllAllergy: baseUrl+'/allergy/getAll',

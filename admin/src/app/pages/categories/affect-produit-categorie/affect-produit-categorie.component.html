@@ -4,7 +4,28 @@
     </nb-card-header>
   
     <nb-card-body>
-      <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
+      <div class="form-group row">
+        <label for="inputEmail1" class="label col-sm-3 col-form-label">Select Category:  </label>
+        <div class="col-sm-9">
+          <nb-select  (selectedChange)="onChange($event)" >
+            <nb-option *ngFor="let u of categories" [value]="u.id">{{u.CategoryName}}</nb-option>
+          </nb-select>
+          
+        </div>
+  
+      </div>
+      <nb-alert status="primary">
+        Current Products : 
+      </nb-alert>
+     
+      <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)" >
+      </ng2-smart-table>
+      <br>
+      <nb-alert status="primary">
+        Other Products : 
+      </nb-alert>
+      
+      <ng2-smart-table [settings]="settingsOther" [source]="sourceOther" (custom)="onCustomAction($event)" >
       </ng2-smart-table>
     </nb-card-body>
   </nb-card>

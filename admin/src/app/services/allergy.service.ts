@@ -53,7 +53,7 @@ export class AllergyService {
   } */
 
   addAllergy(AllergyName: String, Image: String) {
-    const allergy  = { id: null, AllergyName,Image};
+    const allergy  = { AllergyName,Image};
     console.log("allergy Inside SERVICE")
     console.log(allergy);
 

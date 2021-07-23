@@ -21,6 +21,7 @@ export class ListCategoriesComponent implements OnInit {
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
+      confirmSave: true,
     },
     delete: {
       deleteButtonContent: '<i class="nb-trash"></i>',
@@ -73,10 +74,21 @@ export class ListCategoriesComponent implements OnInit {
   }
 
   onDeleteConfirm(event): void {
-    console.log(event.data.idUser);
+    console.log(event.data.id);
     if (window.confirm("Are you sure you want to delete?")) {
-      console.log(event.data.idUser);
-      this.service.deleteCategory(event.data.idUser);
+      console.log(event.data.id);
+      this.service.deleteCategory(event.data.id);
+      event.confirm.resolve();
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  onEditConfirm(event): void {
+    console.log(event.data.id);
+    if (window.confirm("Are you sure you want to edit?")) {
+      console.log(event.data.id);
+      this.service.editCategory(event.newData.CategoryName,event.data.id);
       event.confirm.resolve();
     } else {
       event.confirm.reject();
