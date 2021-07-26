@@ -12,7 +12,10 @@ router.post("/add",[checkJwt, checkRole(["CLIENT"])], AllergyController.add );
 router.post("/addAdmin",[checkJwt, checkRole(["ADMIN"])], AllergyController.addAdmin );
 
 //delete allergie
-router.delete("/delete",[checkJwt, checkRole(["CLIENT"])], AllergyController.delete  );
+router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["CLIENT"])], AllergyController.delete  );
+
+//delete all allergie
+router.delete("/deleteAdmin/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])], AllergyController.deleteAdmin  );
 
 //edit allergie
 router.post("/edit",[checkJwt, checkRole(["ADMIN"])] , AllergyController.editAdmin );

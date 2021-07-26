@@ -20,6 +20,7 @@ export class ListAllergiesComponent implements OnInit {
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
+      confirmSave:true,
     },
     delete: {
       deleteButtonContent: '<i class="nb-trash"></i>',
@@ -54,9 +55,19 @@ export class ListAllergiesComponent implements OnInit {
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
+      this.service.deleteAllergy(event.data.id);
       event.confirm.resolve();
-      console.log(event.data.idUser);
-     // this.service.deleteCategory(event.data.idUser);
+     // 
+    } else {
+      event.confirm.reject();
+    }
+  }
+
+  onEditConfirm(event): void {
+    if (window.confirm('Are you sure you want to edit?')) {
+      this.service.editAllergy(event.data.AllergyName,event.newData.AllergyName);
+      event.confirm.resolve();
+     // 
     } else {
       event.confirm.reject();
     }

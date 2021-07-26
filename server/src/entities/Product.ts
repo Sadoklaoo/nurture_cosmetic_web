@@ -52,7 +52,7 @@ export class Product {
   ProductIngredients: Ingredient[];
 
 
-  @ManyToOne((category) => Category, { onDelete: "CASCADE" })
+  @ManyToOne((category) => Category)
   @JoinColumn()
   Category: Category;
 }

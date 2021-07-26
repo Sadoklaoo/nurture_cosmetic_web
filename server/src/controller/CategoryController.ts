@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 import { Category } from "../entities/Category";
+import { Product } from "../entities/Product";
 
 class CategoryController {
 
@@ -49,14 +50,28 @@ class CategoryController {
     //Get the ID from the url
     const id = req.params.id;
     const categoryRepository = getRepository(Category);
+    const productRepository = getRepository(Product);
     let category: Category;
+    let products;
     try {
       category = await categoryRepository.findOneOrFail(id);
+      products = await productRepository.find({
+        where: {
+          Category: {
+            id: id
+         }
+        }
+      });
+
+      products.forEach(async product => {
+        product.Category = null;
+        await productRepository.save(product);
+      })
     } catch (error) {
       res.status(404).send("category not found.");
       return;
     }
-    categoryRepository.delete(id);
+  await  categoryRepository.delete(id);
     //After all send a 204 (no content, but accepted) response
     res.status(204).send("category deleted.");
   };
