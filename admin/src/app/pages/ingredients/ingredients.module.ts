@@ -18,12 +18,14 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ThemeModule } from '../../@theme/theme.module';
 import { ListIngredientsComponent } from './list-ingredients/list-ingredients.component';
 import { TypeIngredientsComponent } from './type-ingredients/type-ingredients.component';
+import { AddIngredientComponent } from './add-ingredient/add-ingredient.component';
 
 @NgModule({
   declarations: [
     ...routedComponents,
     ListIngredientsComponent,
     TypeIngredientsComponent,
+    AddIngredientComponent,
   ],
   imports: [
     CommonModule,
