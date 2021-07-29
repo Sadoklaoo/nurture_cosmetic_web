@@ -32,5 +32,11 @@ export const environment = {
   editAll: baseUrl+'/allergy/edit',
   addAllergy: baseUrl+'/allergy/addAdmin',
   deleteAllergy: baseUrl+'/allergy/deleteAdmin/',
+
+   // Ingredients
+   getAllIngredient: baseUrl+'/ingredients/getAll',
+   editIngredient: baseUrl+'/ingredients/edit',
+   addIngredient: baseUrl+'/ingredients/add',
+   deleteIngredient: baseUrl+'/ingredients/delete/',
   
 };

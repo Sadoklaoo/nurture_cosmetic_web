@@ -8,17 +8,17 @@ const router = Router();
 router.post("/add",[checkJwt, checkRole(["ADMIN"])], IngredientController.add );
 
 //delete ingredient
-router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])]  );
+router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])], IngredientController.delete  );
 
 //edit ingredient
-router.post("/edit",[checkJwt, checkRole(["ADMIN"])]  );
+router.post("/edit",[checkJwt, checkRole(["ADMIN"])], IngredientController.edit  );
 
 //get ingredient
 router.get("/get",[checkJwt, checkRole(["ADMIN","CLIENT"])]);
 
 
 //get all ingredients
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] );
+router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])] , IngredientController.getAll);
 
 
 

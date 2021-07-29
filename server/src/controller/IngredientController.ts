@@ -54,10 +54,18 @@ class IngredientController {
         where: { IngredientName: IngredientName },
       });
 
-      ingredient.IngredientName = NewIngredientName;
-      ingredient.IngredientType = IngredientType;
+      if (ingredient){
+        ingredient.IngredientName = NewIngredientName;
+        ingredient.IngredientType = IngredientType;
+
+        await IngredientRepository.save(ingredient);
+        res.status(200).send("Ingredient Updated.");
+
+      }
+
       
-      res.status(200).send("Ingredient Updated.");
+      
+      
     } catch (error) {
       res.status(404).send("Not found");
       return;
@@ -66,91 +74,37 @@ class IngredientController {
 
  
 
-  /*static delete = async (req: Request, res: Response) => {
-    let { AllergyName, clientId } = req.body;
 
-    const AllergyRepository = getRepository(Allergy);
-    const ClientRepository = getRepository(Client);
-
-    let client: Client;
-    let allergy = new Allergy();
-    var found = false;
-
-    try {
-      client = await ClientRepository.findOneOrFail({
-        where: { id: clientId },
-      });
-    } catch (error) {
-      res.status(404).send("Client not found");
-      return;
-    }
-
-    try {
-      const myallergies = await AllergyRepository.find({
-        where: { client: clientId },
-      });
-      myallergies.forEach(async (element) => {
-        if (element.AllergyName === AllergyName) {
-          found = true;
-          allergy = element;
-        }
-      });
-    } catch (error) {
-      res.status(404).send("Allergie repo error.");
-      return;
-    }
-
-    if (found) {
-      try {
-        AllergyRepository.delete(allergy);
-      } catch (e) {
-        res.status(409).send("Allergy delete error");
-        return;
-      }
-      //If all ok, send 201 response
-      res.status(201).send("Allergy deleted.");
-    } else {
-      res.status(410).send("Allergy Not Found");
-    }
-  };
-
-  static deleteAdmin = async (req: Request, res: Response) => {
+  static delete = async (req: Request, res: Response) => {
     let id = req.params.id;
 
-    const AllergyRepository = getRepository(Allergy);
+    const IngredientRepository = getRepository(Ingredient);
 
     try {
-      const allergy = await AllergyRepository.findOneOrFail({
+      const ingredient = await IngredientRepository.findOneOrFail({
         where: { id: id },
       });
-      const myallergies = await AllergyRepository.find({
-        where: { AllergyName: allergy.AllergyName },
-      });
-      myallergies.forEach(async (element) => {
-        AllergyRepository.delete(element);
-      });
+     
+      IngredientRepository.delete(ingredient);
+      
     } catch (error) {
-      res.status(409).send("Allergie repo error.");
+      res.status(409).send("Ingredient repo error.");
       return;
     }
-    res.status(201).send("Allergies deleted.");
+    res.status(201).send("Ingredient deleted.");
   };
 
+  
+
   static getAll = async (req: Request, res: Response) => {
-    //Get allergies from database
-    const AllergyRepository = getRepository(Ing);
-    const allergies = await AllergyRepository.find({ relations: ["client"] });
+    //Get Ingredeints from database
+    const IngredientRepository = getRepository(Ingredient);
+    const Ingredients = await IngredientRepository.find();
 
-    let adminallergies: Array<Allergy> = [];
+    
 
-    allergies.forEach((element) => {
-      if (element.client == null) {
-        adminallergies.push(element);
-      }
-    });
-
-    //Send the allergies object
-    res.send(adminallergies);
-  };*/
+    //Send the ingredeitns object
+    res.send(Ingredients);
+  };
 }
 export default IngredientController;

@@ -1,6 +1,10 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NbAuthService } from '@nebular/auth';
 import { LocalDataSource } from 'ng2-smart-table';
 import { SmartTableData } from '../../../@core/data/smart-table';
+import { IngredientService } from '../../../services/ingredient.service';
 
 @Component({
   selector: 'ngx-list-ingredients',
@@ -25,38 +29,31 @@ export class ListIngredientsComponent implements OnInit {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-      },
-      firstName: {
-        title: 'First Name',
+      
+      IngredientName: {
+        title: 'Ingredient Name',
         type: 'string',
       },
-      lastName: {
-        title: 'Last Name',
+      IngredientType: {
+        title: 'Type',
         type: 'string',
       },
-      username: {
-        title: 'Username',
-        type: 'string',
-      },
-      email: {
-        title: 'E-mail',
-        type: 'string',
-      },
-      age: {
-        title: 'Age',
-        type: 'number',
-      },
+      
     },
   };
   source: LocalDataSource = new LocalDataSource();
+  token: string;
+  httpOptions: { headers: HttpHeaders; };
+  categories: any;
 
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  constructor(private service: IngredientService,
+    private router: Router,
+    private http: HttpClient,
+    private authService: NbAuthService,) {
+    
+   
   }
+
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
@@ -67,6 +64,13 @@ export class ListIngredientsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
+    
 
+    this.service.listIngredients().subscribe((response) => {
+      this.categories = response;
+      console.log(response);
+      this.source.load(this.categories);
+    });
+
+  }
 }
