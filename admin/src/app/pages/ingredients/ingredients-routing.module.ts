@@ -13,10 +13,7 @@ const routes: Routes = [
         path: 'list-ingredients',
         component: ListIngredientsComponent,
       },
-      {
-        path: 'type-ingredients',
-        component: TypeIngredientsComponent,
-      },
+      
     ],
   },
 ];

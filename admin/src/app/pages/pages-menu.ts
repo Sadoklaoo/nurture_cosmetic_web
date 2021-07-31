@@ -23,16 +23,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Ingrédients',
     icon: 'clipboard-outline',
-    children: [
-      {
-        title: 'List ingrédients',
-        link: '/pages/ingredients/list-ingredients',
-      },
-      {
-        title: 'Type ingredients',
-        link: '/pages/ingredients/type-ingredients',
-      },
-    ],
+    link: '/pages/ingredients/list-ingredients',
+    
   },
   {
     title: 'Produits',
@@ -99,26 +91,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   
-  {
-    title: 'Auth',
-    icon: 'lock-outline',
-    children: [
-      {
-        title: 'Login',
-        link: '/auth/login',
-      },
-      {
-        title: 'Register',
-        link: '/auth/register',
-      },
-      {
-        title: 'Request Password',
-        link: '/auth/request-password',
-      },
-      {
-        title: 'Reset Password',
-        link: '/auth/reset-password',
-      },
-    ],
-  },
+ 
 ];
