@@ -1,3 +1,4 @@
+import { Ingredient } from './Ingredient';
 import {
   Entity,
   Column,
@@ -24,4 +25,8 @@ export class Allergy {
   @ManyToOne((client) => Client, { onDelete: "CASCADE" })
   @JoinColumn()
   client: Client;
+
+  @ManyToMany(() => Ingredient)
+  @JoinTable({name: 'ingredient_trigered_allergy',})
+  IngredientTriggering: Ingredient[];
 }

@@ -1,10 +1,12 @@
+
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, In, Not } from "typeorm";
 import { validate } from "class-validator";
 
 import { Client } from "../entities/Client";
 import { Allergy } from "../entities/Allergy";
 import { isNullOrUndefined, print } from "util";
+import { Ingredient } from "../entities/Ingredient";
 
 class AllergyController {
   static add = async (req: Request, res: Response) => {
@@ -231,7 +233,7 @@ class AllergyController {
   static getAll = async (req: Request, res: Response) => {
     //Get allergies from database
     const AllergyRepository = getRepository(Allergy);
-    const allergies = await AllergyRepository.find({ relations: ["client"] });
+    const allergies = await AllergyRepository.find({ relations: ["client","IngredientTriggering"] });
 
     let adminallergies: Array<Allergy> = [];
 
@@ -243,6 +245,79 @@ class AllergyController {
 
     //Send the allergies object
     res.send(adminallergies);
+  };
+
+
+  static getOtherIngredients = async (req: Request, res: Response) => {
+    let { id } = req.body;
+    //Get allergies from database
+    const AllergyRepository = getRepository(Allergy);
+    const allergy = await AllergyRepository.findOneOrFail({where:{ id: id }, relations: ["IngredientTriggering"] });
+
+    const IngredientRepository = getRepository(Ingredient);
+    let ingredients;
+    let finalList:Array<String> = [];
+    allergy.IngredientTriggering.forEach((ingredient)=>{
+      finalList.push(ingredient.IngredientName);
+    })
+    console.log(finalList);
+
+  if (finalList.length>0){
+     ingredients = await IngredientRepository.createQueryBuilder("ingredient")
+    .where("ingredient.IngredientName NOT IN (:...list)",{list : finalList}).getMany();
+  }else{
+     ingredients = await IngredientRepository.find();
+  }
+  
+    //Send the allergies object
+    res.send(ingredients);
+  };
+
+  static addIngredients = async (req: Request, res: Response) => {
+    let { id, IngredientId } = req.body;
+
+    const AllergyRepository = getRepository(Allergy);
+    const IngredientRepository = getRepository(Ingredient);
+    try {
+      const allergy = await AllergyRepository.findOneOrFail({where:{ id: id }, relations: ["IngredientTriggering"] });
+      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      allergy.IngredientTriggering.push(ingredient);
+      await AllergyRepository.save(allergy);
+
+      res.status(200).send("IngredientTriggering Updated.");
+    } catch (error) {
+      res.status(404).send("Error IngredientTriggering");
+      return;
+    }
+  };
+
+  static deleteIngredients = async (req: Request, res: Response) => {
+    let { id, IngredientId } = req.body;
+
+    const AllergyRepository = getRepository(Allergy);
+    const IngredientRepository = getRepository(Ingredient);
+    try {
+      const allergy = await AllergyRepository.findOneOrFail({where:{ id: id }, relations: ["IngredientTriggering"] });
+      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      let index = 0;
+      
+
+
+      allergy.IngredientTriggering.forEach((item,i)=>{
+        if (item.id == ingredient.id){
+          index = i;
+        }
+      })
+    
+      allergy.IngredientTriggering.splice(index,1);
+      console.log(allergy.IngredientTriggering);
+      await AllergyRepository.save(allergy);
+
+      res.status(200).send("IngredientTriggering Updated.");
+    } catch (error) {
+      res.status(404).send("Error IngredientTriggering");
+      return;
+    }
   };
 }
 export default AllergyController;

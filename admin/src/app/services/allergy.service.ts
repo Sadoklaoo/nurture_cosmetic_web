@@ -43,6 +43,14 @@ export class AllergyService {
     );
   }
 
+  getOther(id: number,) {
+    const allergy = { id };
+    console.log("allergy Inside SERVICE");
+    console.log(allergy);
+
+  return  this.http.post(environment.getOtherIngredientByAllergy, allergy, this.httpOptions);
+  }
+
   async deleteAllergy(id: number) {
     this.http
       .delete(environment.deleteAllergy + id, this.httpOptions)
@@ -85,6 +93,66 @@ export class AllergyService {
           // tslint:disable-next-line: triple-equals
         } else if (error.status == 201) {
           this.showToast("success");
+        }
+      }
+    );
+  }
+
+  addIngredientAllergy(id: number, IngredientId: number) {
+    const allergy = { id, IngredientId };
+    console.log("allergy Inside SERVICE");
+    console.log(allergy);
+
+    this.http.post(environment.addIngredientAllergy, allergy, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 200) {
+          this.showIngredientToast("success");
+        }
+      }
+    );
+  }
+
+  deleteIngredientAllergy(id: number, IngredientId: number) {
+    const allergy = { id, IngredientId };
+    console.log("allergy Inside SERVICE");
+    console.log(allergy);
+
+    this.http.post(environment.deleteIngredientAllergy, allergy, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 200) {
+          this.showDelIngredientToast("danger");
         }
       }
     );
@@ -134,6 +202,21 @@ export class AllergyService {
     this.toastrService.show(
       status,
       `Allergy EDITED SUCCESSFULLY`,
+      { status }
+    );
+  }
+
+  showIngredientToast(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `Ingredient Added SUCCESSFULLY`,
+      { status }
+    );
+  }
+  showDelIngredientToast(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `Ingredient Deleted SUCCESSFULLY`,
       { status }
     );
   }

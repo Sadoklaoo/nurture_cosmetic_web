@@ -26,7 +26,13 @@ router.post("/getMyAllergies",[checkJwt, checkRole(["CLIENT"])], AllergyControll
 //get all allergie
 router.get("/getAll",[checkJwt, checkRole(["ADMIN"])],AllergyController.getAll );
 
+//get other Ingr Allergy
+router.post("/getOther",[checkJwt, checkRole(["ADMIN"])],AllergyController.getOtherIngredients );
 
+//Add Ingr Allergy
+router.post("/addIngredient",[checkJwt, checkRole(["ADMIN"])],AllergyController.addIngredients );
 
+//Remove Ingr Allergy
+router.post("/deleteIngredient",[checkJwt, checkRole(["ADMIN"])],AllergyController.deleteIngredients );
 
 export default router;
