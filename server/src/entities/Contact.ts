@@ -25,6 +25,9 @@ export class Contact {
   @Column()
   rate: number;
 
+  @Column()
+  status: string;
+
 
   @ManyToOne(() => Client, (client) => client.id, { nullable: true })
   @JoinColumn()

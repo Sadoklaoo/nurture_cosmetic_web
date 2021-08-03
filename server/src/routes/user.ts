@@ -1,6 +1,7 @@
 import { Router } from "express";
 import AdminController from "../controller/AdminController";
 import AllergyController from "../controller/AllergyController";
+import ContactController from "../controller/ContactController";
 import HistoryController from "../controller/HistoryController";
 import SkinController from "../controller/SkinController";
 import UserController from "../controller/UserController";
@@ -22,7 +23,8 @@ router.post("/admins/new", [checkJwt, checkRole(["ADMIN"])],AdminController.newA
 router.post("/admins/edit",[checkJwt, checkRole(["ADMIN"])],  AdminController.editAdmin );
 //Delete Admin
 router.delete("/admins/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],AdminController.deleteAdmin);
-
+//get All Contact
+router.get("/admin/contact",[checkJwt, checkRole(["ADMIN"])],ContactController.getAll);
 
 
 //*************************** CLIENT **********************//
@@ -52,6 +54,9 @@ router.get("/me/skintype",[checkJwt, checkRole(["CLIENT"])], SkinController.getm
 
 //Contact us
 router.post("/me/contact",[checkJwt, checkRole(["CLIENT"])],UserController.clientContact  );
+
+//get All Contact
+router.get("/me/myContact",[checkJwt, checkRole(["CLIENT"])],ContactController.getAllUser);
 
 //update tokenApp for a client
 router.post("/me/updateToken",[checkJwt, checkRole(["CLIENT"])], UserController.updateClientTokenApp );
