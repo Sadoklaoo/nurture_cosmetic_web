@@ -1,3 +1,4 @@
+import { Allergy } from "./../entities/Allergy";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { validate } from "class-validator";
@@ -8,6 +9,7 @@ import { Product } from "../entities/Product";
 import { ProductType } from "../entities/ProductType";
 import { IsNull } from "typeorm";
 import { Category } from "../entities/Category";
+import { Ingredient } from "../entities/Ingredient";
 class ProductController {
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
@@ -55,19 +57,15 @@ class ProductController {
     res.status(201).send("Product created");
   };
 
-
   static setProductCategory = async (req: Request, res: Response) => {
-    let {
-      idProduct,
-      idCategory
-    } = req.body;
+    let { idProduct, idCategory } = req.body;
     //Get products from database
     const productRepository = getRepository(Product);
     const categoryRepository = getRepository(Category);
     let product;
     let category;
     try {
-      product  = await productRepository.findOneOrFail(idProduct,{
+      product = await productRepository.findOneOrFail(idProduct, {
         relations: ["Category"],
       });
     } catch (error) {
@@ -75,13 +73,12 @@ class ProductController {
       return;
     }
 
-    if (idCategory===null){
-      console.log("null Id")
+    if (idCategory === null) {
+      console.log("null Id");
       product.Category = null;
-
-    }else{
+    } else {
       try {
-        category  = await categoryRepository.findOneOrFail(idCategory);
+        category = await categoryRepository.findOneOrFail(idCategory);
       } catch (error) {
         res.status(404).send("Category not found");
         return;
@@ -102,40 +99,40 @@ class ProductController {
   static listAllProducts = async (req: Request, res: Response) => {
     //Get products from database
     const productRepository = getRepository(Product);
-    const products = await productRepository.find({});
+    const products = await productRepository.find({ relations: ["Category"] });
 
     //Send the product object
     res.send(products);
   };
 
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
-    let {
-      id
-    } = req.body;
+    let { id } = req.body;
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
       where: {
         Category: {
-            id: id
-        }
-    }
+          id: id,
+        },
+      },
     });
 
     //Send the product object
     res.send(products);
   };
 
-  static listAllProductsWithoutCategory = async (req: Request, res: Response) => {
-   
+  static listAllProductsWithoutCategory = async (
+    req: Request,
+    res: Response
+  ) => {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
       where: {
         Category: {
-            id: IsNull()
-        }
-    }
+          id: IsNull(),
+        },
+      },
     });
 
     //Send the product object
@@ -158,7 +155,7 @@ class ProductController {
     const productRepository = getRepository(Product);
     try {
       products = await productRepository.findOneOrFail(id, {
-        relations: ["ProductIngredients"],
+        relations: ["ProductIngredients", "Type", "Category"],
       });
     } catch (error) {
       res.status(404).send("Product not found");
@@ -167,6 +164,44 @@ class ProductController {
 
     //Send the product object
     res.send(products);
+  };
+  static productAllergies = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    let product;
+    let ingredients;
+
+    let final_allergies: Allergy[];
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const ingredientRepository = getRepository(Ingredient);
+    try {
+      product = await productRepository.findOneOrFail(id, {
+        relations: ["ProductIngredients", "ProductIngredients.Allergies"],
+      });
+
+      final_allergies = [];
+      ingredients = product.ProductIngredients;
+      ingredients.forEach((ingr) => {
+        ingr.Allergies.forEach((allergy) => {
+          if (final_allergies.indexOf(allergy) == -1) {
+            final_allergies.push(allergy);
+          }
+        });
+      });
+
+      final_allergies = Object.values(
+        final_allergies.reduce(
+          (acc, cur) => Object.assign(acc, { [cur.id]: cur }),
+          {}
+        )
+      );
+    } catch (error) {
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    //Send the product object
+    res.send(final_allergies);
   };
 
   static deleteProduct = async (req: Request, res: Response) => {

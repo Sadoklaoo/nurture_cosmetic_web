@@ -47,29 +47,12 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Réclamations',
     icon: 'question-mark-circle-outline',
-    children: [
-      {
-        title: 'List réclamations',
-        link: '/pages/reclamations/list-reclamation',
-      },
-      {
-        title: 'Changer état réclamation',
-        link: '/pages/reclamations/etat-reclamation',
-      },
-    
-    ],
+    link: '/pages/reclamations/list-reclamation',
   },
   {
     title: 'Utilisateurs',
     icon: 'people-outline',
-    children: [
-      {
-        title: 'List utilisateurs',
-        link: '/pages/users/list-users',
-      },
-      
-    
-    ],
+    link: '/pages/users/list-users',
   },
   {
     title: 'Catégories',

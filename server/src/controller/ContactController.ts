@@ -6,11 +6,6 @@ import { Product } from "../entities/Product";
 import { Contact } from "../entities/Contact";
 
 class ContactController {
-
-
-
-  
-
   static add = async (req: Request, res: Response) => {
     let { CategoryName, Image } = req.body;
     let category = new Category();
@@ -47,40 +42,44 @@ class ContactController {
       products = await productRepository.find({
         where: {
           Category: {
-            id: id
-         }
-        }
+            id: id,
+          },
+        },
       });
 
-      products.forEach(async product => {
+      products.forEach(async (product) => {
         product.Category = null;
         await productRepository.save(product);
-      })
+      });
     } catch (error) {
       res.status(404).send("category not found.");
       return;
     }
-  await  categoryRepository.delete(id);
+    await categoryRepository.delete(id);
     //After all send a 204 (no content, but accepted) response
     res.status(204).send("category deleted.");
   };
 
-  static edit = async (req: Request, res: Response) => {
+  static editAdmin = async (req: Request, res: Response) => {
     //Get values from the body
-    const { id, CategoryName, Image } = req.body;
+    const { id, status } = req.body;
 
     //Try to find category on database
-    const categoryRepository = getRepository(Category);
-    let category;
+    const contactRepository = getRepository(Contact);
+    let contact;
+
     try {
-      category = await categoryRepository.findOneOrFail(id);
-      category.CategoryName = CategoryName;
-      category.Image = Image;
-      categoryRepository.save(category);
-      res.status(203).send("category edited");
+      contact = await contactRepository.findOneOrFail(id);
+      if (contact.status == "PENDING") {
+        contact.status = status;
+        contactRepository.save(contact);
+        res.status(203).send("contact edited");
+      }else{
+        res.status(409).send("contact not edited");
+      }
     } catch (error) {
       //If not found, send a 404 response
-      res.status(404).send("category not found");
+      res.status(404).send("contact not found");
       return;
     }
   };
@@ -89,9 +88,9 @@ class ContactController {
     //Get contact from database
     const contactRepository = getRepository(Contact);
     const contacts = await contactRepository.find({
-      relations: ["Client"]
+      relations: ["Client"],
     });
-  
+
     //Send the contact object
     res.send(contacts);
   };
@@ -100,11 +99,11 @@ class ContactController {
     //Get contact from database
     const contactRepository = getRepository(Contact);
     const contacts = await contactRepository.find({
-      where:{
-        Client:id,
-      }
+      where: {
+        Client: id,
+      },
     });
-  
+
     //Send the contact object
     res.send(contacts);
   };

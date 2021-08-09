@@ -15,8 +15,20 @@ export const environment = {
   me : baseUrl + '/users/admin/me',
   upload: baseUrl+'/uploads/',
 
+ // Products
+ getAllProducts: baseUrl+'/products/getAll',
+ deleteProduct: baseUrl+'/products/delete/',
+ detailsProduct: baseUrl+'/products/getProductDetail/',
+ getAllProductTypes: baseUrl+'/products/getAllTypes',
+ getProductAllergies: baseUrl+'/products/getProductAllergy/',
+ 
+
+
+
   // Users
   getAllUsers: baseUrl+'/users/clients/getAll',
+  getAllContact: baseUrl+'/users/admin/contact',
+  updateContact: baseUrl+'/users/admin/contact/update',
 
   // Category
   getAllCategory: baseUrl+'/category/getAll',

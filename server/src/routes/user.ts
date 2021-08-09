@@ -25,7 +25,8 @@ router.post("/admins/edit",[checkJwt, checkRole(["ADMIN"])],  AdminController.ed
 router.delete("/admins/:id([0-9]+)",[checkJwt, checkRole(["ADMIN"])],AdminController.deleteAdmin);
 //get All Contact
 router.get("/admin/contact",[checkJwt, checkRole(["ADMIN"])],ContactController.getAll);
-
+//get update Contact
+router.post("/admin/contact/update",[checkJwt, checkRole(["ADMIN"])],ContactController.editAdmin);
 
 //*************************** CLIENT **********************//
 //delete client

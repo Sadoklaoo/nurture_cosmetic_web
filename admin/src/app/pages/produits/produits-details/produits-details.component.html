@@ -4,11 +4,17 @@
       <nb-card-header>Sélectionner un produit</nb-card-header>
       <nb-card-body>
         <div class="form-group row">
-          <label for="reference" class="label col-sm-3 col-form-label">Référence</label>
+          <label for="reference" class="label col-sm-3 col-form-label"
+            >Référence</label
+          >
           <div class="col-sm-9">
-            <nb-select selected="1" id="reference" (selectedChange)="toggleLoadingAnimation()">
-              <nb-option value="1">Produit 1</nb-option>
-              <nb-option value="2">Produit 2</nb-option>
+            <nb-select
+              [(selected)]="selectedProduct"
+              (selectedChange)="toggleLoadingAnimation()"
+            >
+              <nb-option *ngFor="let u of product" [value]="u.id">{{
+                u.Reference
+              }}</nb-option>
             </nb-select>
           </div>
         </div>
@@ -18,34 +24,36 @@
     <nb-card>
       <nb-card-header>Image du Produit</nb-card-header>
       <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <img src="../../../../assets/images/product_icon.png" alt="image" class="col-lg-6 center" />
+        <img
+          src="{{BaseLink}}"
+          alt="image"
+          class="col-lg-6 center"
+        />
 
         <button nbButton outline status="primary">
           <nb-icon icon="save"></nb-icon> Changer image
         </button>
       </nb-card-body>
     </nb-card>
-    
-      <nb-card class="list-card" size="small">
-        <nb-card-header>Ingrédients</nb-card-header>
-        <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
-          <nb-list-item *ngFor="let user of users">
-            <nb-user [name]="user.name" [title]="user.title">
-            </nb-user>
-          </nb-list-item>
-        </nb-list>
-      </nb-card>
 
-      <nb-card class="list-card" size="small">
-        <nb-card-header>Allergies</nb-card-header>
-        <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
-          <nb-list-item *ngFor="let user of users">
-            <nb-user [name]="user.name" [title]="user.title">
-            </nb-user>
-          </nb-list-item>
-        </nb-list>
-      </nb-card>
-    
+    <nb-card class="list-card" size="small">
+      <nb-card-header>Ingrédients</nb-card-header>
+      <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <nb-list-item *ngFor="let user of productIngredients">
+          <nb-user [name]="user.IngredientName" [title]="user.IngredientType">
+          </nb-user>
+        </nb-list-item>
+      </nb-list>
+    </nb-card>
+
+    <nb-card class="list-card" size="small">
+      <nb-card-header>Allergies</nb-card-header>
+      <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <nb-list-item *ngFor="let user of productAllergies">
+          <nb-user [name]="user.AllergyName" > </nb-user>
+        </nb-list-item>
+      </nb-list>
+    </nb-card>
   </div>
   <div class="col-lg-6">
     <nb-card>
@@ -54,67 +62,209 @@
         <form>
           <div class="form-group">
             <label for="nom" class="label">Nom Produit</label>
-            <input type="text" nbInput fullWidth id="nom" placeholder="Nom" />
+            <div *ngIf="currentProduct; else elseBlock">
+              <input
+                type="text"
+                nbInput
+                fullWidth
+                id="nom"
+                placeholder="Nom"
+                name="ProductName"
+                #ProductName="ngModel"
+                [(ngModel)]="currentProduct.ProductName"
+              />
+            </div>
+            <ng-template #elseBlock>
+              <input type="text" nbInput fullWidth id="nom" placeholder="Nom" />
+            </ng-template>
           </div>
           <div class="form-group">
             <label for="reference" class="label">Référence</label>
-            <input disabled type="text" nbInput fullWidth id="reference" placeholder="Référence" />
+            <div *ngIf="currentProduct; else elseBlock1">
+              <input
+                disabled
+                type="text"
+                nbInput
+                fullWidth
+                id="reference"
+                placeholder="Référence"
+                name="Reference"
+                #Reference="ngModel"
+                [(ngModel)]="currentProduct.Reference"
+              />
+            </div>
+            <ng-template #elseBlock1>
+              <input
+                disabled
+                type="text"
+                nbInput
+                fullWidth
+                id="reference"
+                placeholder="Référence"
+              />
+            </ng-template>
           </div>
           <div class="form-group">
             <label for="price" class="label">Prix</label>
-            <input type="text" nbInput fullWidth id="price" placeholder="Prix" />
+            <div *ngIf="currentProduct; else elseBlock2">
+              <input
+                type="number"
+                nbInput
+                fullWidth
+                id="price"
+                placeholder="Prix"
+                name="Price"
+                #Price="ngModel"
+                [(ngModel)]="currentProduct.Price"
+              />
+            </div>
+            <ng-template #elseBlock2>
+              <input
+                type="text"
+                nbInput
+                fullWidth
+                id="price"
+                placeholder="Prix"
+              />
+            </ng-template>
           </div>
           <div class="form-group">
             <label for="rank" class="label">Score</label>
-            <input disabled type="text" nbInput fullWidth id="rank" placeholder="Score" />
+            <div *ngIf="currentProduct; else elseBlock3">
+              <input
+                disabled
+                type="number"
+                nbInput
+                fullWidth
+                id="score"
+                placeholder="Score"
+                name="Score"
+                #Score="ngModel"
+                [(ngModel)]="currentProduct.Rank"
+              />
+            </div>
+            <ng-template #elseBlock3>
+              <input
+                disabled
+                type="text"
+                nbInput
+                fullWidth
+                id="score"
+                placeholder="Score"
+              />
+            </ng-template>
           </div>
           <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label">Catégorie</label>
+            <label for="reference" class="label col-sm-3 col-form-label"
+              >Catégorie</label
+            >
 
-            <nb-select selected="1" id="reference">
-              <nb-option value="1">Catégorie 1</nb-option>
-              <nb-option value="2">Catégorie 2</nb-option>
+            <nb-select [(selected)]="selectedCategory">
+              <nb-option *ngFor="let u of categories" [value]="u.id">{{
+                u.CategoryName
+              }}</nb-option>
             </nb-select>
           </div>
           <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label">Type</label>
+            <label for="reference" class="label col-sm-3 col-form-label"
+              >Type</label
+            >
             <div>
-              <nb-checkbox>Bio</nb-checkbox><br>
-              <nb-checkbox>Vegan</nb-checkbox><br>
-              <nb-checkbox>Naturelle</nb-checkbox><br>
-              <nb-checkbox>Sans allergenes</nb-checkbox><br>
-              <nb-checkbox>Eco</nb-checkbox><br>
-              <nb-checkbox checked>Organique</nb-checkbox>
+              <div *ngFor="let u of productTypes">
+                <nb-checkbox [checked]="checkValue(u)" >{{u.TypeName}}</nb-checkbox>
+                <br/>
+              </div>
+              
+              
             </div>
           </div>
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
               >Peau suggéré</label
             >
-            <nb-select selected="1" id="reference">
-              <nb-option value="1">Skin Type 1</nb-option>
-              <nb-option value="2">Skin Type 2</nb-option>
+            <nb-select [(selected)]="selectedSkin">
+              <nb-option *ngFor="let u of skintypes" [value]="u.id">{{
+                u.name
+              }}</nb-option>
             </nb-select>
           </div>
           <div class="form-group">
             <label for="rank" class="label">Dimensions</label>
-            <input disabled type="text" nbInput fullWidth id="rank" placeholder="Score" />
+            <div *ngIf="currentProduct; else elseBlock4">
+              <input
+                type="text"
+                nbInput
+                fullWidth
+                id="Dimensions"
+                placeholder="Dimensions"
+                name="Dimensions"
+                #Dimensions="ngModel"
+                [(ngModel)]="currentProduct.ProductDimensions"
+              />
+            </div>
+            <ng-template #elseBlock4>
+              <input
+                disabled
+                type="text"
+                nbInput
+                fullWidth
+                id="Dimensions"
+                placeholder="Dimensions"
+              />
+            </ng-template>
           </div>
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
-              >Description </label
-            >
-            <textarea rows="5" nbInput fullWidth   placeholder="Text Area"></textarea>
+              >Description
+            </label>
+            <div *ngIf="currentProduct; else elseBlock6">
+              <textarea
+                rows="5"
+                nbInput
+                fullWidth
+                placeholder="Description Area"
+                name="Description"
+                #Description="ngModel"
+                [(ngModel)]="currentProduct.ProductDescription"
+              ></textarea>
+            </div>
+            <ng-template #elseBlock6>
+              <textarea
+                rows="5"
+                nbInput
+                fullWidth
+                placeholder="Description Area"
+              ></textarea>
+            </ng-template>
           </div>
-          
+
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
-              >Autre description </label
-            >
-            <nb-checkbox>Autre description</nb-checkbox><br>
-            <textarea rows="5" nbInput fullWidth disabled  placeholder="Text Area"></textarea>
+              >Autre description
+            </label>
+            <div *ngIf="currentProduct; else elseBlock7">
+              <textarea
+                rows="5"
+                nbInput
+                fullWidth
+                name="Second Description"
+                #SecondDescription="ngModel"
+                [(ngModel)]="currentProduct.ProductSecondDescription"
+                placeholder="Second Description Area"
+              ></textarea>
+            </div>
+            <ng-template #elseBlock7>
+              <textarea
+                rows="5"
+                nbInput
+                fullWidth
+                placeholder="Second Description Area"
+              ></textarea>
+            </ng-template>
           </div>
-          <button type="submit" nbButton status="danger">Modifier</button>
+          <button type="submit" fullWidth nbButton status="danger">
+            Modifier
+          </button>
         </form>
       </nb-card-body>
     </nb-card>

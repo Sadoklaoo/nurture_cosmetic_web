@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { NbAuthJWTToken, NbAuthService } from '@nebular/auth';
 import { NbComponentStatus, NbToastrService } from '@nebular/theme';
 import { environment } from '../../environments/environment';
+import { Allergy } from '../entities/Allergy';
+import { Product } from '../entities/Product';
+import { ProductType } from '../entities/ProductType';
 
 @Injectable({
   providedIn: 'root'
@@ -71,10 +74,65 @@ export class ProductService {
     );
   }
 
- /* listCategories() {
-    return this.http.get<Category[]>(
-      environment.getAllCategory,
+  showToastDelete(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `PRODUCT DELETED SUCCESSFULLY`,
+      { status }
+    );
+  }
+  showToastDeleteError(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `PRODUCT DELETED ERROR`,
+      { status }
+    );
+  }
+
+  listProducts() {
+    return this.http.get<Product[]>(
+      environment.getAllProducts,
       this.httpOptions
     );
-  }*/
+  }
+
+  listProductType() {
+    return this.http.get<ProductType[]>(
+      environment.getAllProductTypes,
+      this.httpOptions
+    );
+  }
+
+  listProductAllergy(id:number) {
+    return this.http.get<Allergy[]>(
+      environment.getProductAllergies+id,
+      this.httpOptions
+    );
+  }
+
+  getCurrentProduct(id: number) {
+    return this.http.get<Product>(
+      environment.detailsProduct + id,
+      this.httpOptions
+    );
+  }
+
+  async deleteProduct(id: number) {
+    this.http
+      .delete(environment.deleteProduct + id, this.httpOptions)
+      .subscribe(
+        (res) => {
+          console.log(res);
+          this.showToastDelete("success");
+        },
+        (err: HttpErrorResponse) => {
+          if (err.error instanceof Error) {
+            console.log("Client-side error occured.");
+            this.showToastDeleteError("danger");
+          } else {
+            console.log("Server-side error occured.");
+          }
+        }
+      );
+  }
 }

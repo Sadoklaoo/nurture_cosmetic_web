@@ -37,7 +37,7 @@ export abstract class User {
   @Column("datetime", { nullable: true })
   birthDate: Date;
 
-  @Column({ nullable: true })
+  @Column()
   // @Length(4, 100)
   password: string;
 

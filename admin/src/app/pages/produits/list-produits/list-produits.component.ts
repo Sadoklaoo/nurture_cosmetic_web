@@ -1,6 +1,10 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NbAuthService } from '@nebular/auth';
 import { LocalDataSource } from 'ng2-smart-table';
 import { SmartTableData } from '../../../@core/data/smart-table';
+import { ProductService } from '../../../services/product.service';
 
 @Component({
   selector: 'ngx-list-produits',
@@ -10,64 +14,74 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 export class ListProduitsComponent implements OnInit {
 
   settings = {
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
+    actions: {
+      add: false,
+      edit: false,
+      delete: true,
     },
     delete: {
       deleteButtonContent: '<i class="nb-trash"></i>',
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
+      ProductName: {
+        title: 'Nom Produit',
+        type: 'string',
+      },
+      Reference: {
+        title: 'Reference',
+        type: 'string',
+      },
+      Price: {
+        title: 'Prix',
         type: 'number',
       },
-      firstName: {
-        title: 'First Name',
-        type: 'string',
-      },
-      lastName: {
-        title: 'Last Name',
-        type: 'string',
-      },
-      username: {
-        title: 'Username',
-        type: 'string',
-      },
-      email: {
-        title: 'E-mail',
-        type: 'string',
-      },
-      age: {
-        title: 'Age',
+      Rank: {
+        title: 'Rang',
         type: 'number',
       },
+      PreferedSkinType: {
+        title: 'Peau Préferé',
+        type: 'string',
+      },
+      Category: {
+        title: 'Catégorie',
+        type: 'string',
+        valuePrepareFunction: (data) => { return data.CategoryName }
+
+      },
+     
     },
   };
   source: LocalDataSource = new LocalDataSource();
+  token: string;
+  httpOptions: { headers: HttpHeaders };
+  products: any;
 
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  constructor(
+    private service: ProductService,
+    private router: Router,
+    private http: HttpClient,
+    private authService: NbAuthService
+  ) {}
+
+
+  ngOnInit(): void {
+    this.service.listProducts().subscribe((response) => {
+      this.products = response;
+      // console.log(response);
+      this.source.load(this.products);
+    });
   }
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
+      this.service.deleteProduct(event.data.id);
       event.confirm.resolve();
+     // 
     } else {
       event.confirm.reject();
     }
-  }
-
-
-  ngOnInit(): void {
   }
 
 }

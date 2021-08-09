@@ -24,7 +24,8 @@ router.get("/getAllTypes",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductCont
 //get product
 router.get("/getProductDetail/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productDetail );
 
-
+//get product allergies
+router.get("/getProductAllergy/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productAllergies );
 
 
 export default router;
