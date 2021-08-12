@@ -95,6 +95,67 @@ export class ProductService {
       this.httpOptions
     );
   }
+  showToast(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `PRODUCT ADDED SUCCESSFULLY`,
+      { status }
+    );
+  }
+
+  public uploadImage(image: File) {
+    const formData = new FormData();
+
+    formData.append("image", image);
+
+    return this.http.post(environment.upload, formData);
+  }
+
+  addProduct(ProductName: String,
+    Reference: String,
+    Price: number,
+    Category: any,
+    ProductDescription: String,
+    ProductSecondDescription: String,
+    ProductDimensions: String,
+    Type:any,
+    PreferedSkinType: String,
+     Image: String) {
+    const product = { ProductName,Reference,
+      Category,
+      ProductDescription,
+      ProductSecondDescription,
+      ProductDimensions,
+      PreferedSkinType,
+      Type,
+      Price, Image };
+    console.log("product Inside SERVICE");
+    console.log(product);
+
+    this.http.post(environment.addProduct, product, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 201) {
+          this.showToast("success");
+        }
+      }
+    );
+  }
 
   listProductType() {
     return this.http.get<ProductType[]>(

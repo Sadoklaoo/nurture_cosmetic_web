@@ -21,6 +21,7 @@ export const environment = {
  detailsProduct: baseUrl+'/products/getProductDetail/',
  getAllProductTypes: baseUrl+'/products/getAllTypes',
  getProductAllergies: baseUrl+'/products/getProductAllergy/',
+ addProduct: baseUrl+'/products/add',
  
 
 

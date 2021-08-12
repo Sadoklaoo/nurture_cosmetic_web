@@ -35,6 +35,10 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/pages/produits/list-produits',
       },
       {
+        title: 'Ajouter Produit',
+        link: '/pages/produits/add-produits',
+      },
+      {
         title: 'Affecter produits/ingredients',
         link: '/pages/produits/produits-ingredients',
       },
