@@ -1,3 +1,4 @@
+import { isNullOrUndefined } from 'util';
 import { HttpHeaders } from "@angular/common/http";
 import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
@@ -7,6 +8,7 @@ import { NbDialogService } from "@nebular/theme";
 import { CategoryService } from "../../../services/category.service";
 import { ProductService } from "../../../services/product.service";
 import { mimeType } from "../../../validators/mime-type.validator";
+import { ShowcaseDialogComponent } from "../../modal-overlays/dialog/showcase-dialog/showcase-dialog.component";
 
 @Component({
   selector: "ngx-add-produit",
@@ -45,7 +47,7 @@ export class AddProduitComponent implements OnInit {
     private service: ProductService,
     private categoryService: CategoryService,
     private formBuilder: FormBuilder,
-    
+    private dialogService: NbDialogService
   ) {
     this.redirectDelay = this.getConfigValue('forms.login.redirectDelay');
     this.showMessages = this.getConfigValue('forms.login.showMessages');
@@ -75,7 +77,14 @@ export class AddProduitComponent implements OnInit {
     return getDeepFromObject(this.options, key, null);
   }
 
-  
+  open(title,message) {
+   this.dialogService.open(ShowcaseDialogComponent, {
+      context: {
+        title: title,
+        message:message
+      },
+    });
+  }
 
   ngOnInit(): void {
 
@@ -111,18 +120,40 @@ export class AddProduitComponent implements OnInit {
    // const AllergyName = this.allergy.AllergyName;
 
    // this.allergyService.addAllergy(AllergyName, this.file.name);
+   
+   if (this.file == null && this.file == undefined ){
+    this.open("Image Error","Veuillez inserer une image")
+   }else {
+  
+    if (this.selectedCategory === 0){
+      this.open("Category Error","Veuillez séléctionner une category")
+     }  else{
+       if ((this.product.ProductName!=null && this.product.ProductName!= undefined)
+        && (this.product.Reference!=null && this.product.Reference!= undefined)
+        && (this.product.Price!=0 && this.product.Price!= undefined)
+        && (this.product.ProductDescription!="" && this.product.ProductDescription!= undefined)
+        && (this.product.ProductSecondDescription!="" && this.product.ProductSecondDescription!= undefined)
+        && (this.product.ProductDimensions!=null && this.product.ProductDimensions!= undefined)
+        ){
+          this.service.addProduct(this.product.ProductName,
+            this.product.Reference,
+            this.product.Price,
+            this.categories[this.selectedCategory],
+            this.product.ProductDescription,
+            this.product.ProductSecondDescription,
+            this.product.ProductDimensions,
+            this.finalTypes,
+            this.skintypes[this.selectedSkin].name,
+            this.file.name)
+         }else{
+          this.open("Field Error","Veuillez completer tout les champs")
+         }
+        }
+     
+   }
     
-   this.service.addProduct(this.product.ProductName,
-    this.product.Reference,
-    this.product.Price,
-    this.categories[this.selectedCategory],
-    this.product.ProductDescription,
-    this.product.ProductSecondDescription,
-    this.product.ProductDimensions,
-    this.finalTypes,
-    this.skintypes[this.selectedSkin].name,
-    this.file.name)
-    console.log("Product Inside component.Ts");
+   
+  
    // console.log(this.skintypes[this.selectedSkin]);
    //console.log(this.categories[this.selectedCategory]);
 

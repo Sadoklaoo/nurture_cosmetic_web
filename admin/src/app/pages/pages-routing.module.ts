@@ -40,6 +40,11 @@ const routes: Routes = [{
       loadChildren: () => import('./categories/categories.module')
         .then(m => m.CategoriesModule),
     },
+    {
+      path: 'modal-overlays',
+      loadChildren: () => import('./modal-overlays/modal-overlays.module')
+        .then(m => m.ModalOverlaysModule),
+    },
     
     {
       path: '',

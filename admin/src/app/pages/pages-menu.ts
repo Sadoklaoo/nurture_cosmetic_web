@@ -59,6 +59,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/users/list-users',
   },
   {
+    title: 'Dialog',
+    icon: 'people-outline',
+    link: '/pages/modal-overlays/dialog',
+  },
+  {
     title: 'Catégories',
     icon: 'grid-outline',
     children: [
