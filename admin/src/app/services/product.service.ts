@@ -103,6 +103,8 @@ export class ProductService {
     );
   }
 
+ 
+
   public uploadImage(image: File) {
     const formData = new FormData();
 
@@ -152,6 +154,117 @@ export class ProductService {
           // tslint:disable-next-line: triple-equals
         } else if (error.status == 201) {
           this.showToast("success");
+        }
+      }
+    );
+  }
+
+  getOther(id: number,) {
+    const product = { id };
+    console.log("product Inside SERVICE");
+    console.log(product);
+
+  return  this.http.post(environment.getOtherIngredientByProduct, product, this.httpOptions);
+  }
+  showIngredientToast(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `Ingredient Added SUCCESSFULLY`,
+      { status }
+    );
+  }
+  showDelIngredientToast(status: NbComponentStatus) {
+    this.toastrService.show(
+      status,
+      `Ingredient Deleted SUCCESSFULLY`,
+      { status }
+    );
+  }
+
+  addIngredientProduct(id: number, IngredientId: number) {
+    const Product = { id, IngredientId };
+    console.log("Product Inside SERVICE");
+    console.log(Product);
+
+    this.http.post(environment.addIngredientProduct, Product, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 200) {
+          this.showIngredientToast("success");
+        }
+      }
+    );
+  }
+
+  deleteIngredientProduct(id: number, IngredientId: number) {
+    const Product = { id, IngredientId };
+    console.log("Product Inside SERVICE");
+    console.log(Product);
+
+    this.http.post(environment.deleteIngredientProduct, Product, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 200) {
+          this.showDelIngredientToast("danger");
+        }
+      }
+    );
+  }
+
+  editProduct(product:any) {
+    console.log("product Inside SERVICE");
+    console.log(product);
+
+    this.http.post(environment.editProduct, product, this.httpOptions).subscribe(
+      (response) => {
+        //    console.log(this.getAuthData().token)
+        console.log(response);this.showToastEdit("success");
+      },
+      (error: HttpErrorResponse) => {
+        console.log("HTTPERROR");
+        console.log(error);
+        // tslint:disable-next-line: triple-equals
+        if (error.status == 404) {
+          console.log("Please Verify storeID");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 409) {
+          console.log("reference is already exist");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 400) {
+          console.log("missing data");
+          // tslint:disable-next-line: triple-equals
+        } else if (error.status == 204) {
+          this.showToastEdit("success");
         }
       }
     );

@@ -71,7 +71,7 @@ export class NgxLoginComponent {
                 this.tokenStorage.saveToken(token.getValue());
                 this.tokenStorage.saveRole(token.getPayload().role);
                 if (this.user.role==="ADMIN"){
-                  return this.router.navigateByUrl("/pages/allergies");
+                  return this.router.navigateByUrl("/pages/ingredients/list-ingredients");
                 }
                 
               }

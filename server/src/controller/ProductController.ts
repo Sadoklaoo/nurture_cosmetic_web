@@ -99,7 +99,7 @@ class ProductController {
   static listAllProducts = async (req: Request, res: Response) => {
     //Get products from database
     const productRepository = getRepository(Product);
-    const products = await productRepository.find({ relations: ["Category"] });
+    const products = await productRepository.find({ relations: ["Category","ProductIngredients"] });
 
     //Send the product object
     res.send(products);
@@ -220,115 +220,135 @@ class ProductController {
     res.status(204).send();
   };
 
-  /* static getOneById = async (req: Request, res: Response) => {
-  //Get the ID from the url
-  const id =  req.params.id;
 
-  //Get the user from database
-  const adminRepository = getRepository(Admin);
-  try {
-    const user = await adminRepository.findOneOrFail(id, {
-      select: ["id", "username", "role"] //We dont want to send the password on response
-    });
-  } catch (error) {
-    res.status(404).send("User not found");
-  }
-}; 
- */
-  static editAdmin = async (req: Request, res: Response) => {
+  static editProduct = async (req: Request, res: Response) => {
     //Get values from the body
-    const { id, firstName, lastName, phoneNumber, email, address } = req.body;
+    const { id, 
+      ProductName, 
+      Reference, 
+      Category, 
+      ProductDescription, 
+      ProductSecondDescription,
+      ProductDimensions,
+      PreferedSkinType,
+      Type,
+      Price,
+      Image } = req.body;
 
-    //Try to find admin on database
-    const adminRepository = getRepository(Admin);
-    let admin;
+    //Try to find product on database
+    const productRepository = getRepository(Product);
+    let product;
     try {
-      admin = await adminRepository.findOneOrFail(id);
+      product = await productRepository.findOneOrFail(id);
     } catch (error) {
       //If not found, send a 404 response
       res.status(404).send("Admin not found");
       return;
     }
 
-    //Validate the new values on model
-    admin.firstName = firstName;
-    admin.lastName = lastName;
-    admin.email = email;
-    admin.address = address;
-    admin.phoneNumber = phoneNumber;
+    
 
-    const errors = await validate(admin);
+    //Validate the new values on model
+    product.ProductName = ProductName;
+    product.Category = Category;
+    product.ProductDescription = ProductDescription;
+    product.ProductSecondDescription = ProductSecondDescription;
+    product.ProductDimensions = ProductDimensions;
+    product.PreferedSkinType = PreferedSkinType;
+    product.Type = Type;
+    product.Price = Price;
+    product.Image = Image;
+
+    const errors = await validate(product);
     if (errors.length > 0) {
       res.status(400).send(errors);
       return;
     }
     //Try to safe, if fails, that means phoneNumber already in use
     try {
-      await adminRepository.save(admin);
+      await productRepository.save(product);
     } catch (e) {
-      res.status(409).send("phoneNumber already in use");
+      res.status(409).send("Error in update");
       return;
     }
     //After all send a 204 (no content, but accepted) response
     res.status(204).send();
   };
 
-  static getOneByPhoneNumber = async (req: Request, res: Response) => {
-    //Get the phoneNumber from request body
-    let { phoneNumber } = req.body;
-    //Get the admin from database
-    const adminRepository = getRepository(Admin);
-    try {
-      // const user = await  adminRepository.findOneOrFail({ phoneNumber });
-      const admin = await adminRepository.findOneOrFail(phoneNumber, {
-        select: ["phoneNumber", "id", "role"], //We dont want to send the password on response
-      });
-      res.send(admin);
-    } catch (error) {
-      res.status(404).send("Admin not found");
-    }
+  static getOtherIngredients = async (req: Request, res: Response) => {
+    let { id } = req.body;
+    //Get Product from database
+    const ProductRepository = getRepository(Product);
+    const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
+
+    const IngredientRepository = getRepository(Ingredient);
+    let ingredients;
+    let finalList:Array<String> = [];
+    product.ProductIngredients.forEach((ingredient)=>{
+      finalList.push(ingredient.IngredientName);
+    })
+    console.log(finalList);
+
+  if (finalList.length>0){
+     ingredients = await IngredientRepository.createQueryBuilder("ingredient")
+    .where("ingredient.IngredientName NOT IN (:...list)",{list : finalList}).getMany();
+  }else{
+     ingredients = await IngredientRepository.find();
+  }
+  
+    //Send the ingredients object
+    res.send(ingredients);
   };
 
-  static deleteAdmin = async (req: Request, res: Response) => {
-    //Get the ID from the url
-    const id = req.params.id;
-    const adminRepository = getRepository(Admin);
-    let admin: Admin;
+  static addIngredients = async (req: Request, res: Response) => {
+    let { id, IngredientId } = req.body;
+
+    const ProductRepository = getRepository(Product);
+    const IngredientRepository = getRepository(Ingredient);
     try {
-      admin = await adminRepository.findOneOrFail(id);
+      const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
+      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      product.ProductIngredients.push(ingredient);
+      await ProductRepository.save(product);
+
+      res.status(200).send("ProductIngredients Updated.");
     } catch (error) {
-      res.status(404).send("Admin not found");
+      res.status(404).send("Error ProductIngredients");
       return;
     }
-    adminRepository.delete(id);
-    //After all send a 204 (no content, but accepted) response
-    res.status(204).send();
   };
 
-  static me = async (req: Request, res: Response) => {
-    //Get the phoneNumber from request body
-    const token = <string>req.headers["auth"];
-    let jwtPayload;
+  static deleteIngredients = async (req: Request, res: Response) => {
+    let { id, IngredientId } = req.body;
+
+    const ProductRepository = getRepository(Product);
+    const IngredientRepository = getRepository(Ingredient);
     try {
-      jwtPayload = <any>jwt.verify(token, config.jwtSecret);
-      res.locals.jwtPayload = jwtPayload;
+      const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
+      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      let index = 0;
+      
+
+
+      product.ProductIngredients.forEach((item,i)=>{
+        if (item.id == ingredient.id){
+          index = i;
+        }
+      })
+    
+      product.ProductIngredients.splice(index,1);
+      console.log(product.ProductIngredients);
+      await ProductRepository.save(product);
+
+      res.status(200).send("ProductIngredients Updated.");
     } catch (error) {
-      //If token is not valid, respond with 401 (unauthorized)
-      res.status(401).send();
+      res.status(404).send("Error ProductIngredients");
       return;
     }
-
-    const { userId } = jwtPayload;
-    //Get the admin from database
-    const adminRepository = getRepository(Admin);
-    try {
-      const admin = await adminRepository.findOneOrFail({
-        where: { id: userId },
-      });
-      res.send(admin);
-    } catch (error) {
-      res.status(404).send("admin not found");
-    }
   };
+
+ 
+
+  
 }
 export default ProductController;

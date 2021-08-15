@@ -36,9 +36,9 @@ export class Product {
   @JoinTable({name: 'product_types',})
   Type: ProductType[];
 
-  @Column()
+  @Column({ type: "longtext" })
   ProductDescription: string;
-  @Column()
+  @Column({ type: "longtext" })
   ProductSecondDescription: string;
 
   @Column()

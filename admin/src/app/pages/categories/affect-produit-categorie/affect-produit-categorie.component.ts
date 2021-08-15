@@ -27,17 +27,20 @@ export class AffectProduitCategorieComponent implements OnInit {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: "ID",
-        type: "number",
+      Reference: {
+        title: "Reference",
+        type: "string",
       },
       ProductName: {
         title: "Product Name",
         type: "string",
       },
       Image: {
-        title: "Image",
-        type: "string",
+        editable:false,
+        title: 'Image',
+        type: 'html',
+        width:'15%',
+        valuePrepareFunction: (data) => { return '<img width="100%" height="100%" src= http://localhost:3000/images/'+ data +'>' }
       },
     },
   };
@@ -63,19 +66,15 @@ export class AffectProduitCategorieComponent implements OnInit {
           name: 'Add',
           title: '<i class="nb-plus-circled" title="Add"></i>'
         },
-        {
-          name: 'View',
-          title: '&nbsp;<i class="nb-compose" title="View"></i>'
-        },
+       
       ],
 
     },
 
     columns: {
-      id: {
-        title: "ID",
-        type: "number",
-        editable: false,
+      Reference: {
+        title: "Reference",
+        type: "string",
       },
       ProductName: {
         title: "Product Name",
@@ -83,9 +82,11 @@ export class AffectProduitCategorieComponent implements OnInit {
         editable: false,
       },
       Image: {
-        title: "Image",
-        type: "string",
-        editable: false,
+        editable:false,
+        title: 'Image',
+        type: 'html',
+        width:'15%',
+        valuePrepareFunction: (data) => { return '<img width="100%" height="100%" src= http://localhost:3000/images/'+ data +'>' }
       },
      /* Actions: //or something
       {

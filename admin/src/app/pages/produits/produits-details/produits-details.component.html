@@ -29,10 +29,57 @@
           alt="image"
           class="col-lg-6 center"
         />
+      </nb-card-body>
+    </nb-card>
 
-        <button nbButton outline status="primary">
-          <nb-icon icon="save"></nb-icon> Changer image
-        </button>
+    <nb-card>
+      <nb-card-header>Modifier Image du Produit</nb-card-header>
+      <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
+        <button
+              nbButton
+              fullWidth
+              status="primary"
+              size="large"
+              
+              outline status="primary"
+              type="button"
+              (click)="filePicker.click()"
+            >
+            <nb-icon icon="save"></nb-icon> Changer image
+            </button>
+            <br />
+            <br />
+            <input
+              type="file"
+              input
+              #imageInput
+              #filePicker
+              accept="image/*"
+              (change)="processFile(imageInput)"
+            />
+      
+            <div
+              class="image-preview"
+              *ngIf="
+                imagePreview !== '' && imagePreview && registerForm.get('image').valid
+              "
+            >
+              <img
+                [src]="imagePreview"
+                class="displayed"
+                style="
+                  width: auto;
+                  height: 150px;
+                  align-content: center;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              />
+            </div>
+            <br />
+            <br />
+        
       </nb-card-body>
     </nb-card>
 
@@ -59,7 +106,7 @@
     <nb-card>
       <nb-card-header>Détails Produit</nb-card-header>
       <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <form>
+        <form (ngSubmit)="editProduct()" #form="ngForm" aria-labelledby="title">
           <div class="form-group">
             <label for="nom" class="label">Nom Produit</label>
             <div *ngIf="currentProduct; else elseBlock">
@@ -170,12 +217,17 @@
               >Type</label
             >
             <div>
-              <div *ngFor="let u of productTypes">
-                <nb-checkbox [checked]="checkValue(u)" >{{u.TypeName}}</nb-checkbox>
+              <div *ngIf="currentProduct; else  elseBlock15">
+                <nb-select [(selected)]="selectedTypes" 
+               
+                multiple placeholder="Type Select">
+                  <nb-option *ngFor="let u of productTypes" [value]="u.id">{{u.TypeName}}</nb-option>
+                
+                </nb-select>
                 <br/>
               </div>
               
-              
+              <ng-template #elseBlock15></ng-template>
             </div>
           </div>
           <div class="form-group row">

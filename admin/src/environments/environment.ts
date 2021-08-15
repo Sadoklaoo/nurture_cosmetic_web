@@ -22,8 +22,10 @@ export const environment = {
  getAllProductTypes: baseUrl+'/products/getAllTypes',
  getProductAllergies: baseUrl+'/products/getProductAllergy/',
  addProduct: baseUrl+'/products/add',
- 
-
+ editProduct: baseUrl+'/products/edit',
+ getOtherIngredientByProduct: baseUrl+'/products/getOther',
+ addIngredientProduct: baseUrl+'/products/addIngredient',
+ deleteIngredientProduct: baseUrl+'/products/deleteIngredient',
 
 
   // Users
