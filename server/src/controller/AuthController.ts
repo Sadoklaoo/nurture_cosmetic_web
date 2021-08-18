@@ -51,6 +51,9 @@ class AuthController {
       const clientRepository = getRepository(Client);
       try {
         user = await clientRepository.findOneOrFail({ where: { email } });
+        
+        console.log("email   : "+email+" Password : " + password+ " Type Account " +typeAccount);
+
         token = jwt.sign(
           {
             userId: user.id,

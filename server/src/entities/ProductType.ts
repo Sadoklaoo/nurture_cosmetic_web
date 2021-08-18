@@ -13,6 +13,9 @@ import {
   
     @Column()
     TypeName: string;
+
+    @Column()
+    Image: string;
    
   }
   

@@ -9,14 +9,14 @@ import routes from "./routes";
 import CategoryController from "./controller/CategoryController";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../uploads/");
+    cb(null, "/uploads/");
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
   },
 });
 const upload = multer({ storage: storage });
-
+const port = 3000;
 //Connects to the Database -> then starts the express
 createConnection()
   .then(async (connection) => {
@@ -53,8 +53,8 @@ createConnection()
       console.log(image);
       return res.send("SUCCESS");
     })
-    app.listen(3000, () => {
-      console.log("Server started on port 3000!");
+    app.listen(process.env.PORT || port, () => {
+      console.log("Server started on port "+port);
     });
   })
   .catch((error) => console.log(error));

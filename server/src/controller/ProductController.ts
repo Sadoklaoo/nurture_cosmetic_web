@@ -110,6 +110,8 @@ class ProductController {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
+      select:["id","ProductName", "Price","Image","ProductDescription"],
+      relations:["Category"],
       where: {
         Category: {
           id: id,
