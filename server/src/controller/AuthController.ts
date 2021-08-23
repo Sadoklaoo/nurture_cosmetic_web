@@ -20,7 +20,14 @@ class AuthController {
 
     console.log(req.body);
 
-    console.log("email   : "+email+" Password : " + password+ " Type Account " +typeAccount);
+    console.log(
+      "email   : " +
+        email +
+        " Password : " +
+        password +
+        " Type Account " +
+        typeAccount
+    );
     if (!(email && password && typeAccount)) {
       res.status(400).send();
     }
@@ -51,8 +58,15 @@ class AuthController {
       const clientRepository = getRepository(Client);
       try {
         user = await clientRepository.findOneOrFail({ where: { email } });
-        
-        console.log("email   : "+email+" Password : " + password+ " Type Account " +typeAccount);
+
+        console.log(
+          "email   : " +
+            email +
+            " Password : " +
+            password +
+            " Type Account " +
+            typeAccount
+        );
 
         token = jwt.sign(
           {
@@ -171,9 +185,9 @@ class AuthController {
 
   static sendRequestCode = async (req: Request, res: Response) => {
     //Get parameters from the body
-    let { phoneNumber,email } = req.body;
+    let { phoneNumber, email } = req.body;
     let client: Client;
-    var number=parseInt(phoneNumber);
+    var number = parseInt(phoneNumber);
     const clientRepository = getRepository(Client);
     client = await clientRepository.findOne({
       where: { email: email, verified: false },
@@ -184,13 +198,13 @@ class AuthController {
       let requestcode = randomize("0", 4);
       client.requestCode = requestcode;
       client.phoneNumber = number;
-      var minutesToAdd=60;
+      var minutesToAdd = 60;
       var currentDate = new Date();
-      var futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+      var futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
       client.requestCodeEndDate = futureDate;
       try {
         await clientRepository.save(client);
-      /*  clientTwilio.messages
+        /*  clientTwilio.messages
           .create({
             body: "Open Nurture Cosmetic App and use your code " + requestcode,
             from: "+13344871567",
@@ -204,10 +218,8 @@ class AuthController {
       res.status(201).send("New request code is sent");
       return;
     } else {
-      
       res.status(404).send("Client not found.");
       console.log("Client not found");
-    
     }
   };
 
@@ -224,13 +236,13 @@ class AuthController {
       console.log("Exist");
       let requestcode = randomize("0", 4);
       client.requestCode = requestcode;
-      var minutesToAdd=60;
+      var minutesToAdd = 60;
       var currentDate = new Date();
-      var futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+      var futureDate = new Date(currentDate.getTime() + minutesToAdd * 60000);
       client.requestCodeEndDate = futureDate;
       try {
         await clientRepository.save(client);
-      /*  clientTwilio.messages
+        /*  clientTwilio.messages
           .create({
             body: "Open Nurture Cosmetic App and use your code " + requestcode,
             from: "+13344871567",
@@ -244,53 +256,57 @@ class AuthController {
       res.status(201).send("New request code is sent");
       return;
     } else {
-      
       res.status(404).send("Client not found.");
       console.log("Client not found");
-    
     }
   };
 
   static newAccount = async (req: Request, res: Response) => {
     //Get parameters from the body
     // just send date in english format  (YYYY/MM/dd)
-    let { firstName, lastName,email, password, birthDate,sexe  } = req.body;
-    
+    let { firstName, lastName, email, password, birthDate, sexe } = req.body;
+
     const clientRepository = getRepository(Client);
-    
 
-    console.log(firstName, lastName, password, email,birthDate,sexe)
-      let client = new Client();
-      client.firstName = firstName;
-      client.lastName = lastName;
-      client.email = email;
-      client.birthDate = birthDate;
-      client.password = password;
-      client.sexe = sexe;
-      client.role = "CLIENT";
-
-      //Validade if the parameters are ok
-    const errors = await validate(client);
-    if (errors.length > 0) {
-      res.status(400).send(errors);
-      return;
-    }
-    //Hash the password, to securely store on DB
-    client.hashPassword();
-    //Try to save. If fails, the email is already in use
     try {
-      await clientRepository.save(client);
+      let clientFound = await clientRepository.findOne({ email: email });
+
+      if (clientFound) {
+        res.status(403).send("Email already in use");
+      } else {
+        console.log(firstName, lastName, password, email, birthDate, sexe);
+        let client = new Client();
+        client.firstName = firstName;
+        client.lastName = lastName;
+        client.email = email;
+        client.birthDate = birthDate;
+        client.password = password;
+        client.sexe = sexe;
+        client.role = "CLIENT";
+
+        //Validade if the parameters are ok
+        const errors = await validate(client);
+        if (errors.length > 0) {
+          res.status(400).send(errors);
+          return;
+        }
+        //Hash the password, to securely store on DB
+        client.hashPassword();
+        //Try to save. If fails, the email is already in use
+        try {
+          await clientRepository.save(client);
+        } catch (e) {
+          res.status(409).send("Insert Error");
+          return;
+        }
+        //If all ok, send 201 response
+        res.sendStatus(201);
+      }
     } catch (e) {
-      res.status(409).send("Email already in use");
+      res.status(403).send("Email already in use");
       return;
     }
-    //If all ok, send 201 response
-    res.sendStatus(201);
-     
-    
   };
-
-  
 
   //! VerifyCode Function
   static checkRequestCode = async (req: Request, res: Response) => {
@@ -308,7 +324,10 @@ class AuthController {
       res.status(400).send("Please verify your email");
       return;
     }
-    if (client.requestCode == requestCode && AuthController.compareDate(new Date(),client.requestCodeEndDate)!=1) {
+    if (
+      client.requestCode == requestCode &&
+      AuthController.compareDate(new Date(), client.requestCodeEndDate) != 1
+    ) {
       client.requestCode = null;
       client.verified = true;
       clientRepository.save(client);
@@ -317,7 +336,7 @@ class AuthController {
       return;
     } else if (client.requestCode != requestCode) {
       res.status(403).send("Please verify Code.");
-    }else {
+    } else {
       res.status(405).send("Request Code Expired.");
     }
   };

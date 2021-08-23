@@ -204,7 +204,7 @@ class UserController {
 
   static editClient = async (req: Request, res: Response) => {
     //Get values from the body
-    const { firstName, lastName, email, birthDate,  password } = req.body;
+    const { firstName, lastName, email, birthDate,  password,newpassword } = req.body;
 
     //Try to find client on database
     const clientRepository = getRepository(Client);
@@ -224,8 +224,8 @@ class UserController {
 
     // if Register   cad  password  exist
     // else continue cad profile edit
-    if (password != null) {
-      client.password = password;
+    if (password != null && client.checkIfUnencryptedPasswordIsValid(password) && newpassword!=null) {
+      client.password = newpassword;
       client.hashPassword();
     }
 
@@ -236,7 +236,52 @@ class UserController {
     //Validate the new values on model
     const errors = await validate(client);
     if (errors.length > 0) {
-      res.status(400).send(errors);
+      res.status(402).send(errors);
+      return;
+    }
+    //Try to safe, if fails, that means phoneNumber already in use
+    try {
+      await clientRepository.save(client);
+    } catch (e) {
+      res.status(400).send("A problem has been Occured");
+      console.log(e);
+      return;
+    }
+    //After all send a 204 (no content, but accepted) response
+    res.status(204).send();
+  };
+  static editClientPassword = async (req: Request, res: Response) => {
+    //Get values from the body
+    const { email,  password,newpassword } = req.body;
+
+    //Try to find client on database
+    const clientRepository = getRepository(Client);
+    let client: Client;
+    try {
+      client = await clientRepository.findOneOrFail({ where: { email: email } });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Client(email) not found");
+      console.log(error)
+      return;
+    }
+
+    // if Register   cad  password  exist
+    // else continue cad profile edit
+    if (password != null && client.checkIfUnencryptedPasswordIsValid(password) && newpassword!=null) {
+      client.password = newpassword;
+      client.hashPassword();
+    }else{
+      res.status(403).send("Wrong Old Password");
+    }
+
+
+    // ! Only for adminstrator
+    //client.phoneNumber=newPhoneNumber;
+    //Validate the new values on model
+    const errors = await validate(client);
+    if (errors.length > 0) {
+      res.status(402).send(errors);
       return;
     }
     //Try to safe, if fails, that means phoneNumber already in use

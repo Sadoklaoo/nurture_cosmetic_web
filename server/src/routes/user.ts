@@ -64,6 +64,7 @@ router.post("/me/updateToken",[checkJwt, checkRole(["CLIENT"])], UserController.
 
 //update client Data
 router.put("/clients/edit",[checkJwt, checkRole(["ADMIN","CLIENT"])], UserController.editClient );
-
+//update client password
+router.put("/clients/editpassword",[checkJwt, checkRole(["CLIENT"])], UserController.editClientPassword );
 
 export default router;

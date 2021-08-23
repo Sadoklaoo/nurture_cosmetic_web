@@ -28,7 +28,7 @@ createConnection()
     app.use(bodyParser.json());
     //Set all routes from routes folder
     app.use("/", routes);
-    app.use('/images',express.static('/uploads/'));
+    app.use('/images',express.static('./uploads/'));
 
 
     app.post("/uploads", upload.single("image"), function (req, res) {

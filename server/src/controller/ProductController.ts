@@ -10,6 +10,7 @@ import { ProductType } from "../entities/ProductType";
 import { IsNull } from "typeorm";
 import { Category } from "../entities/Category";
 import { Ingredient } from "../entities/Ingredient";
+import { Client } from "../entities/Client";
 class ProductController {
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
@@ -99,10 +100,201 @@ class ProductController {
   static listAllProducts = async (req: Request, res: Response) => {
     //Get products from database
     const productRepository = getRepository(Product);
-    const products = await productRepository.find({ relations: ["Category","ProductIngredients"] });
+    const products = await productRepository.find({
+      relations: ["Category", "ProductIngredients"],
+    });
 
     //Send the product object
     res.send(products);
+  };
+
+  static listAllFavoris = async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    //Try to find client on database
+    const clientRepository = getRepository(Client);
+    let client;
+    try {
+      client = await clientRepository.findOneOrFail(id, {
+        relations: ["Favoris", "Favoris.Category"],
+      });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Admin not found");
+      return;
+    }
+    if (
+      client.Favoris != undefined &&
+      client.Favoris != null &&
+      client.Favoris.length != 0
+    ) {
+      res.send(client.Favoris);
+    } else {
+      res.status(403).send("No favorite found.");
+    }
+  };
+
+  static isProductInFavoris = async (req: Request, res: Response) => {
+    const { id, idProduct } = req.body;
+
+    //Try to find client on database
+    const clientRepository = getRepository(Client);
+    let client;
+    const productRepository = getRepository(Product);
+    let product;
+    try {
+      client = await clientRepository.findOne(id, {
+        relations: ["Favoris", "Favoris.Category"],
+      });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Admin not found");
+      return;
+    }
+    try {
+      product = await productRepository.findOne(idProduct);
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    if (
+      client.Favoris != null &&
+      client.Favoris != undefined &&
+      client.Favoris.length != 0 &&
+      product != undefined &&
+      product != null
+    ) {
+      let found = false;
+      client.Favoris.forEach((prod) => {
+        if (prod.id == product.id) {
+          found = true;
+        }
+      });
+      if (found) {
+        res.status(200).send("In favorite.");
+      } else {
+        res.status(403).send("Not In favorite.");
+      }
+    } else {
+      res.status(403).send("Not In favorite.");
+    }
+  };
+
+  static addProductToFavoris = async (req: Request, res: Response) => {
+    const { id, idProduct } = req.body;
+
+    //Try to find client on database
+    const clientRepository = getRepository(Client);
+    let client;
+    const productRepository = getRepository(Product);
+    let product;
+    try {
+      client = await clientRepository.findOne(id, {
+        relations: ["Favoris", "Favoris.Category"],
+      });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Admin not found");
+      return;
+    }
+    try {
+      product = await productRepository.findOneOrFail(idProduct);
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    if (
+      client.Favoris != null &&
+      client.Favoris != undefined &&
+      client.Favoris.length != 0
+    ) {
+      let found = false;
+      client.Favoris.forEach((prod) => {
+        if (prod.id == product.id) {
+          found = true;
+        }
+      });
+      if (found) {
+        res.status(205).send("In favorite.");
+      } else {
+        client.Favoris[client.Favoris.length] = product;
+        try {
+          await clientRepository.save(client);
+          res.status(200).send("Added Successfuly to Favorit");
+        } catch (e) {
+          res.status(409).send("Favoris Update Error");
+          return;
+        }
+      }
+    } else {
+      client.Favoris[0] = product;
+      try {
+        await clientRepository.save(client);
+        res.status(200).send("Added New Successfuly to Favorit");
+      } catch (e) {
+        res.status(409).send("Favoris Update Error");
+        return;
+      }
+    }
+  };
+
+  static removeProductFromFavoris = async (req: Request, res: Response) => {
+    const { id, idProduct } = req.body;
+
+    //Try to find client on database
+    const clientRepository = getRepository(Client);
+    let client;
+    const productRepository = getRepository(Product);
+    let product;
+    let ind=-1;
+    try {
+      client = await clientRepository.findOne(id, {
+        relations: ["Favoris", "Favoris.Category"],
+      });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Admin not found");
+      return;
+    }
+    try {
+      product = await productRepository.findOneOrFail(idProduct);
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    if (
+      client.Favoris != null &&
+      client.Favoris != undefined &&
+      client.Favoris.length != 0
+    ) {
+      let found = false;
+      client.Favoris.forEach((prod,index) => {
+        if (prod.id == product.id) {
+          found = true;
+          ind = index;
+        }
+      });
+      if (found) {
+        client.Favoris.splice(ind,1);
+        try {
+          await clientRepository.save(client);
+          res.status(200).send("Removed Successfuly From Favorit");
+        } catch (e) {
+          res.status(409).send("Favoris Update Error");
+          return;
+        }
+      } else {
+        res.status(205).send("Not In favorite.");
+      }
+    } else {
+      res.status(203).send("Favoris already empty");
+    }
   };
 
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
@@ -110,8 +302,8 @@ class ProductController {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
-      select:["id","ProductName", "Price","Image","ProductDescription"],
-      relations:["Category"],
+      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
+      relations: ["Category"],
       where: {
         Category: {
           id: id,
@@ -222,20 +414,21 @@ class ProductController {
     res.status(204).send();
   };
 
-
   static editProduct = async (req: Request, res: Response) => {
     //Get values from the body
-    const { id, 
-      ProductName, 
-      Reference, 
-      Category, 
-      ProductDescription, 
+    const {
+      id,
+      ProductName,
+      Reference,
+      Category,
+      ProductDescription,
       ProductSecondDescription,
       ProductDimensions,
       PreferedSkinType,
       Type,
       Price,
-      Image } = req.body;
+      Image,
+    } = req.body;
 
     //Try to find product on database
     const productRepository = getRepository(Product);
@@ -247,8 +440,6 @@ class ProductController {
       res.status(404).send("Admin not found");
       return;
     }
-
-    
 
     //Validate the new values on model
     product.ProductName = ProductName;
@@ -281,23 +472,29 @@ class ProductController {
     let { id } = req.body;
     //Get Product from database
     const ProductRepository = getRepository(Product);
-    const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
+    const product = await ProductRepository.findOneOrFail({
+      where: { id: id },
+      relations: ["ProductIngredients"],
+    });
 
     const IngredientRepository = getRepository(Ingredient);
     let ingredients;
-    let finalList:Array<String> = [];
-    product.ProductIngredients.forEach((ingredient)=>{
+    let finalList: Array<String> = [];
+    product.ProductIngredients.forEach((ingredient) => {
       finalList.push(ingredient.IngredientName);
-    })
+    });
     console.log(finalList);
 
-  if (finalList.length>0){
-     ingredients = await IngredientRepository.createQueryBuilder("ingredient")
-    .where("ingredient.IngredientName NOT IN (:...list)",{list : finalList}).getMany();
-  }else{
-     ingredients = await IngredientRepository.find();
-  }
-  
+    if (finalList.length > 0) {
+      ingredients = await IngredientRepository.createQueryBuilder("ingredient")
+        .where("ingredient.IngredientName NOT IN (:...list)", {
+          list: finalList,
+        })
+        .getMany();
+    } else {
+      ingredients = await IngredientRepository.find();
+    }
+
     //Send the ingredients object
     res.send(ingredients);
   };
@@ -308,8 +505,13 @@ class ProductController {
     const ProductRepository = getRepository(Product);
     const IngredientRepository = getRepository(Ingredient);
     try {
-      const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
-      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      const product = await ProductRepository.findOneOrFail({
+        where: { id: id },
+        relations: ["ProductIngredients"],
+      });
+      const ingredient = await IngredientRepository.findOneOrFail({
+        where: { id: IngredientId },
+      });
       product.ProductIngredients.push(ingredient);
       await ProductRepository.save(product);
 
@@ -326,19 +528,22 @@ class ProductController {
     const ProductRepository = getRepository(Product);
     const IngredientRepository = getRepository(Ingredient);
     try {
-      const product = await ProductRepository.findOneOrFail({where:{ id: id }, relations: ["ProductIngredients"] });
-      const ingredient = await IngredientRepository.findOneOrFail({where:{ id: IngredientId }});
+      const product = await ProductRepository.findOneOrFail({
+        where: { id: id },
+        relations: ["ProductIngredients"],
+      });
+      const ingredient = await IngredientRepository.findOneOrFail({
+        where: { id: IngredientId },
+      });
       let index = 0;
-      
 
-
-      product.ProductIngredients.forEach((item,i)=>{
-        if (item.id == ingredient.id){
+      product.ProductIngredients.forEach((item, i) => {
+        if (item.id == ingredient.id) {
           index = i;
         }
-      })
-    
-      product.ProductIngredients.splice(index,1);
+      });
+
+      product.ProductIngredients.splice(index, 1);
       console.log(product.ProductIngredients);
       await ProductRepository.save(product);
 
@@ -348,9 +553,5 @@ class ProductController {
       return;
     }
   };
-
- 
-
-  
 }
 export default ProductController;
