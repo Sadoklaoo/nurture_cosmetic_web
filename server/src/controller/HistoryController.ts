@@ -122,7 +122,7 @@ class HistoryController {
     try {
       clientHistory = await HistoryRepository.find({
         where: { Client: clientId },
-        relations: ["ConsultedProducts"],
+        relations: ["ConsultedProducts","ConsultedProducts.Category"],
       });
 
       res.status(200).send(clientHistory);

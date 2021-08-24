@@ -12,7 +12,7 @@ router.post("/add",[checkJwt, checkRole(["CLIENT"])], HistoryController.add );
 router.delete("/delete/:id([0-9]+)",[checkJwt, checkRole(["CLIENT"])] , HistoryController.delete );
 
 //get all historys
-router.get("/getAll",[checkJwt, checkRole(["CLIENT"])],HistoryController.getAll );
+router.post("/getAll",[checkJwt, checkRole(["CLIENT"])],HistoryController.getAll );
 
 
 
