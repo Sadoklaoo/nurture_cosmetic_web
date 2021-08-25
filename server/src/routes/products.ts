@@ -33,6 +33,9 @@ router.post("/removeFromFavoris",[checkJwt, checkRole(["CLIENT"])], ProductContr
 //get all products
 router.get("/getAllTypes",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.listAllProductType );
 
+//get all product by category
+router.post("/getAllProductsByType",[checkJwt, checkRole(["ADMIN","CLIENT"])],ProductController.listAllProductsByTypeId  );
+
 //get product
 router.get("/getProductDetail/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productDetail );
 

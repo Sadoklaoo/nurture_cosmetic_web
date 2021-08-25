@@ -1,6 +1,6 @@
 import { Allergy } from "./../entities/Allergy";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 import { validate } from "class-validator";
 import { Admin } from "../entities/Admin";
 import * as jwt from "jsonwebtoken";
@@ -250,7 +250,7 @@ class ProductController {
     let client;
     const productRepository = getRepository(Product);
     let product;
-    let ind=-1;
+    let ind = -1;
     try {
       client = await clientRepository.findOne(id, {
         relations: ["Favoris", "Favoris.Category"],
@@ -274,14 +274,14 @@ class ProductController {
       client.Favoris.length != 0
     ) {
       let found = false;
-      client.Favoris.forEach((prod,index) => {
+      client.Favoris.forEach((prod, index) => {
         if (prod.id == product.id) {
           found = true;
           ind = index;
         }
       });
       if (found) {
-        client.Favoris.splice(ind,1);
+        client.Favoris.splice(ind, 1);
         try {
           await clientRepository.save(client);
           res.status(200).send("Removed Successfuly From Favorit");
@@ -313,6 +313,51 @@ class ProductController {
 
     //Send the product object
     res.send(products);
+  };
+
+  static listAllProductsByTypeId = async (req: Request, res: Response) => {
+    let { typeName } = req.body;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const manager = getManager();
+    /*const result = await manager.query(`SELECT * FROM product AS p 
+    LEFT JOIN category AS c ON p.categoryId = c.id 
+    LEFT JOIN product_types AS t ON t.productId = p.id
+    LEFT JOIN product_type AS ty ON t.productTypeId = ty.id
+    WHERE ty.TypeName = "Bio";`);*/
+
+    const result = await productRepository.find({
+      join: {
+        alias: "product",
+        leftJoinAndSelect: {
+          Category: "product.Category",
+          Type: "product.Type",
+        },
+      },
+      where: (qb) => {
+        qb.where("Type.TypeName= :typeName", { typeName: typeName });
+      },
+    });
+    /* const resultat = await manager.getRepository(Product).createQueryBuilder().select();
+    ;
+    .leftJoin('Product.Category','Category')
+    .leftJoin('Product.Type','Type');*/
+
+    //console.log(resultat);
+
+    /*  const products = await productRepository.find({
+      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
+      relations: ["Category","Type"],
+      where: {
+        id:id,
+        Type: {
+          TypeName: "Bio",
+        },
+      },
+    });*/
+
+    //Send the product object
+    res.send(result);
   };
 
   static listAllProductsWithoutCategory = async (
