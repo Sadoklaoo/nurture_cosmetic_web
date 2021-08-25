@@ -297,6 +297,40 @@ class ProductController {
     }
   };
 
+
+  static mostPopularProductByUser = async (req: Request, res: Response) => {
+    let { id } = req.body;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const userRepository = getRepository(Client);
+
+
+    try {
+      // const user = await  userRepository.findOneOrFail({ phoneNumber });
+      const user = await userRepository.findOneOrFail({id}, {
+        select: ["id", "email", "firstName", "lastName", "phoneNumber", "sexe"], 
+        relations:["Skin","Favoris","History","History.ConsultedProducts","Allergies"]//We dont want to send the password on response
+      });
+      res.send(user);
+    } catch (error) {
+      res.status(404).send("user not found");
+    }
+
+
+  /*  const products = await productRepository.find({
+      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
+      relations: ["Category"],
+      where: {
+        Category: {
+          id: id,
+        },
+      },
+    });*/
+
+    //Send the product object
+   // res.send(products);
+  };
+
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
     let { id } = req.body;
     //Get products from database
@@ -386,6 +420,8 @@ class ProductController {
     //Send the product object
     res.send(products);
   };
+
+
 
   static productDetail = async (req: Request, res: Response) => {
     const id = req.params.id;
