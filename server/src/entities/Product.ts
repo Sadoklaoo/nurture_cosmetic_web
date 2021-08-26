@@ -8,6 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from "typeorm";
+import { Allergy } from "./Allergy";
 import { Category } from "./Category";
 import { Ingredient } from "./Ingredient";
 import { ProductType } from "./ProductType";
@@ -55,4 +56,54 @@ export class Product {
   @ManyToOne((category) => Category)
   @JoinColumn()
   Category: Category;
+
+  isProductSimilar(product: Product) {
+    let isSimilar = true;
+    let final_allergies: Allergy[];
+    let product_allergies: Allergy[];
+    let ingredients;
+    let product_ingredients;
+
+    final_allergies = [];
+    product_allergies = [];
+    ingredients = product.ProductIngredients;
+    ingredients.forEach((ingr) => {
+      ingr.Allergies.forEach((allergy) => {
+        if (final_allergies.indexOf(allergy) == -1) {
+          final_allergies.push(allergy);
+        }
+      });
+    });
+
+    final_allergies = Object.values(
+      final_allergies.reduce(
+        (acc, cur) => Object.assign(acc, { [cur.id]: cur }),
+        {}
+      )
+    );
+
+    product_ingredients = this.ProductIngredients;
+    product_ingredients.forEach((ingr) => {
+      ingr.Allergies.forEach((allergy) => {
+        if (product_allergies.indexOf(allergy) == -1) {
+          product_allergies.push(allergy);
+        }
+      });
+    });
+
+    product_allergies = Object.values(
+      product_allergies.reduce(
+        (acc, cur) => Object.assign(acc, { [cur.id]: cur }),
+        {}
+      )
+    );
+
+    if(this.Category.CategoryName!=product.Category.CategoryName){
+      isSimilar = false;
+    }
+    
+    
+
+    return isSimilar;
+  }
 }

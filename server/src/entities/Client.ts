@@ -39,11 +39,51 @@ export class Client extends User {
   @OneToMany(() => History, (History) => History.Client)
   History: History[];
 
-  @OneToOne(() => Skin,(skin)=>skin.Client)
+  @OneToOne(() => Skin, (skin) => skin.Client)
   Skin: Skin;
 
-  
   @ManyToMany(() => Product)
-  @JoinTable({name: 'client_favoris',})
+  @JoinTable({ name: "client_favoris" })
   Favoris: Product[];
+
+  isProductCompatible(product: Product) {
+    let isCompatible = true;
+    let final_allergies: Allergy[];
+    let ingredients;
+
+    final_allergies = [];
+    ingredients = product.ProductIngredients;
+    ingredients.forEach((ingr) => {
+      ingr.Allergies.forEach((allergy) => {
+        if (final_allergies.indexOf(allergy) == -1) {
+          final_allergies.push(allergy);
+        }
+      });
+    });
+
+    final_allergies = Object.values(
+      final_allergies.reduce(
+        (acc, cur) => Object.assign(acc, { [cur.id]: cur }),
+        {}
+      )
+    );
+
+    if (
+      this.Skin != null &&
+      (this.Skin.SkinType != product.PreferedSkinType ||
+        product.PreferedSkinType != "NORMAL")
+    ) {
+      isCompatible = false;
+    }
+
+    this.Allergies.forEach((userAllergy) => {
+      final_allergies.forEach((allergy) => {
+        if (allergy.AllergyName == userAllergy.AllergyName) {
+          isCompatible = false;
+        }
+      });
+    });
+
+    return isCompatible;
+  }
 }

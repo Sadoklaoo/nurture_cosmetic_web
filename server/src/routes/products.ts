@@ -40,7 +40,7 @@ router.post("/getAllProductsByType",[checkJwt, checkRole(["ADMIN","CLIENT"])],Pr
 router.get("/getProductDetail/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productDetail );
 
 //get product
-router.post("/getPopular",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.mostPopularProductByUser);
+router.post("/isProductCompatible",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.isProductCompatibleToUser);
 
 //get product allergies
 router.get("/getProductAllergy/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productAllergies );

@@ -300,30 +300,68 @@ class ProductController {
   };
 
 
-  static mostPopularProductByUser = async (req: Request, res: Response) => {
-    let { id } = req.body;
+  static isProductCompatibleToUser = async (req: Request, res: Response) => {
+    let { idProduct,idUser } = req.body;
     //Get products from database
     const productRepository = getRepository(Product);
     const userRepository = getRepository(Client);
-    const products = await productRepository.find({
-      relations: ["Category", "ProductIngredients"],
-    });
-    var displaymode = "Yes"
-    var inputArray = products;
-    var fromIndex = 0;
-    var outputOptions = "First";
-    
-    
-    /* try {
-      // const user = await  userRepository.findOneOrFail({ phoneNumber });
-      const user = await userRepository.findOneOrFail({id}, {
-        select: ["id", "email", "firstName", "lastName", "phoneNumber", "sexe"], 
-        relations:["Skin","Favoris","History","History.ConsultedProducts","Allergies"]//We dont want to send the password on response
+    let product;
+    let user;
+    let final_allergies: Allergy[];
+    let ingredients;
+    try {
+      product = await productRepository.findOneOrFail(idProduct,{
+        relations:["ProductIngredients","ProductIngredients.Allergies"]
       });
-      res.send(user);
+      final_allergies = [];
+      ingredients = product.ProductIngredients;
+      ingredients.forEach((ingr) => {
+        ingr.Allergies.forEach((allergy) => {
+          if (final_allergies.indexOf(allergy) == -1) {
+            final_allergies.push(allergy);
+          }
+        });
+      });
+
+      final_allergies = Object.values(
+        final_allergies.reduce(
+          (acc, cur) => Object.assign(acc, { [cur.id]: cur }),
+          {}
+        )
+      );
     } catch (error) {
-      res.status(404).send("user not found");
-    } */
+      //If not found, send a 404 response
+      res.status(404).send("Product not found");
+      return;
+    }
+
+    try {
+      user = await userRepository.findOneOrFail(idUser,{
+        relations:["Skin", "Allergies"]
+      });
+    } catch (error) {
+      //If not found, send a 404 response
+      res.status(404).send("User not found");
+      return;
+    }
+
+    if(user.Skin!=null && (user.Skin.SkinType != product.PreferedSkinType || product.PreferedSkinType !="NORMAL")){
+      res.status(301).send('Skin Type doesnt match')
+    }
+
+    user.Allergies.forEach(userAllergy => {
+        final_allergies.forEach(allergy =>{
+          if (allergy.AllergyName == userAllergy.AllergyName){
+            res.status(302).send('Contains triggering allergies');
+          }
+        })
+    });
+
+    console.log(user.isProductCompatible(product));
+
+    res.status(200).send('Product Compatible');
+    
+
 
 
   };
