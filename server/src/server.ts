@@ -7,6 +7,15 @@ import * as cors from "cors";
 import * as multer from "multer";
 import routes from "./routes";
 import CategoryController from "./controller/CategoryController";
+
+
+const elastic = require('elasticsearch');
+const elasticClient = elastic.Client({
+  host:'localhost:9200'
+});
+
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "/uploads/");

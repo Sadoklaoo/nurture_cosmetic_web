@@ -11,7 +11,9 @@ import { IsNull } from "typeorm";
 import { Category } from "../entities/Category";
 import { Ingredient } from "../entities/Ingredient";
 import { Client } from "../entities/Client";
+
 class ProductController {
+  
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
     let {
@@ -303,9 +305,16 @@ class ProductController {
     //Get products from database
     const productRepository = getRepository(Product);
     const userRepository = getRepository(Client);
-
-
-    try {
+    const products = await productRepository.find({
+      relations: ["Category", "ProductIngredients"],
+    });
+    var displaymode = "Yes"
+    var inputArray = products;
+    var fromIndex = 0;
+    var outputOptions = "First";
+    
+    
+    /* try {
       // const user = await  userRepository.findOneOrFail({ phoneNumber });
       const user = await userRepository.findOneOrFail({id}, {
         select: ["id", "email", "firstName", "lastName", "phoneNumber", "sexe"], 
@@ -314,21 +323,9 @@ class ProductController {
       res.send(user);
     } catch (error) {
       res.status(404).send("user not found");
-    }
+    } */
 
 
-  /*  const products = await productRepository.find({
-      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
-      relations: ["Category"],
-      where: {
-        Category: {
-          id: id,
-        },
-      },
-    });*/
-
-    //Send the product object
-   // res.send(products);
   };
 
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
