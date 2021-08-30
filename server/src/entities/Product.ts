@@ -7,6 +7,8 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Allergy } from "./Allergy";
 import { Category } from "./Category";
@@ -32,6 +34,14 @@ export class Product {
 
   @Column()
   Image: string;
+
+  @Column()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column()
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToMany(() => ProductType)
   @JoinTable({name: 'product_types',})
