@@ -14,7 +14,7 @@ export class Ingredient {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({unique:true})
   IngredientName: string;
 
   @Column()

@@ -11,6 +11,8 @@ import { ProductService } from '../../../services/product.service';
 export class ProduitsIngredientsComponent implements OnInit {
 
   token: string;
+  searchOthers: string;
+  search: string;
   httpOptions: { headers: HttpHeaders };
   product: any;
   ProductIngredients: any;
@@ -30,6 +32,7 @@ export class ProduitsIngredientsComponent implements OnInit {
         this.filterList(element)
       }
     });
+    
   }
   constructor(
     private service: ProductService
@@ -44,6 +47,44 @@ export class ProduitsIngredientsComponent implements OnInit {
       }
     })
   }
+
+
+  Search() {
+    if(this.searchOthers!="")
+    {
+      this.Others = this.Others.filter(
+        res=>{
+          return res.IngredientName.toLowerCase().startsWith(this.searchOthers.toLowerCase()) ;
+        }
+      );
+    }else{
+      this.service.getOther(this.selectedProduct).subscribe((response) => {
+        this.Others = response;
+        console.log(response)
+      });
+    }
+  
+  }
+  SearchIngredient() {
+    if(this.search!="")
+    {
+      this.ProductIngredients = this.ProductIngredients.filter(
+        res=>{
+          return res.IngredientName.toLowerCase().startsWith(this.search.toLowerCase()) ;
+        }
+      );
+    }else{
+     this.ngOnInit();
+     this.product.forEach((element)=>{
+      if (element.id == this.selectedProduct){
+        this.ProductIngredients = element.ProductIngredients;
+      }
+    });
+
+    }
+  
+  }
+
   onDelete(id :number){
     //console.log(id)
     this.service.deleteIngredientProduct(this.selectedProduct,id);

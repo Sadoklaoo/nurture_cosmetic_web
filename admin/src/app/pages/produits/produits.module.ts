@@ -2,7 +2,7 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProduitsRoutingModule, routedComponents } from './produits-routing.module';
-import { NbCardModule, NbSelectModule, NbSpinnerModule, NbIconModule, NbAlertModule, NbInputModule, NbUserModule, NbListModule, NbButtonModule, NbCheckboxModule } from '@nebular/theme';
+import { NbCardModule, NbSelectModule, NbSpinnerModule, NbIconModule, NbAlertModule, NbInputModule, NbUserModule, NbListModule, NbButtonModule, NbCheckboxModule, NbFormFieldModule } from '@nebular/theme';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ThemeModule } from '../../@theme/theme.module';
 import { ListProduitsComponent } from './list-produits/list-produits.component';
@@ -28,6 +28,7 @@ import { AddProduitComponent } from './add-produit/add-produit.component';
     NbInputModule,
     NbButtonModule,
     NbEvaIconsModule,
+    NbFormFieldModule,
     NbSpinnerModule,
     NbCheckboxModule,
     ThemeModule,

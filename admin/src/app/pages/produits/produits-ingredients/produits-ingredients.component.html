@@ -24,6 +24,12 @@
     <div class="col-md-6 col-lg-6 col-xxxl-6">
       <nb-card class="list-card" size="small" [nbSpinner]="loading" nbSpinnerStatus="primary">
         <nb-card-header>Ingrédients de produit </nb-card-header>
+        <br>
+        <nb-form-field>
+          <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+          <input  type="text" placeholder="Search..."  [(ngModel)]="search" fullWidth nbInput (input)="SearchIngredient()">
+        </nb-form-field>
+        <br>
         <nb-list >
           <nb-list-item *ngFor="let ingr of ProductIngredients">
   
@@ -37,9 +43,18 @@
         </nb-list>
       </nb-card>
     </div>
-    <div class="col-md-6 col-lg-6 col-xxxl-6">
+    <div class="col-lg-6 ">
       <nb-card class="list-card" size="small" [nbSpinner]="loading" nbSpinnerStatus="primary">
         <nb-card-header>Autres Ingrédients </nb-card-header>
+        <br>
+        
+          <nb-form-field>
+            <nb-icon nbPrefix icon="search-outline" pack="eva"></nb-icon>
+            <input  type="text" placeholder="Search..."  [(ngModel)]="searchOthers" fullWidth nbInput (input)="Search()">
+          </nb-form-field>
+     
+        
+        <br>
         <nb-list >
           <nb-list-item *ngFor="let user of Others">
   

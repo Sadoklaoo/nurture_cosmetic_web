@@ -27,10 +27,7 @@ export class AffectProduitCategorieComponent implements OnInit {
       confirmDelete: true,
     },
     columns: {
-      Reference: {
-        title: "Reference",
-        type: "string",
-      },
+      
       ProductName: {
         title: "Product Name",
         type: "string",
