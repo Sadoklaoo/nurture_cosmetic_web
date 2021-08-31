@@ -359,7 +359,7 @@ class ProductController {
 
     console.log(user.isProductCompatible(product));
 
-    res.status(200).send('Product Compatible');
+    res.status(200).send('IsCompatible');
     
 
 
@@ -378,6 +378,22 @@ class ProductController {
           id: id,
         },
       },
+    });
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static getLatestProduct = async (req: Request, res: Response) => {
+    
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const products = await productRepository.findOne({
+      select: ["id", "ProductName", "Price", "Image", "ProductDescription","createdAt"],
+      relations: ["Category"],
+      order:{
+        createdAt:"DESC"
+      }
     });
 
     //Send the product object

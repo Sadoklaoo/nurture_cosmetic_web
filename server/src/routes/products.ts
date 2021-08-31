@@ -48,6 +48,9 @@ router.get("/getProductAllergy/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIEN
 //get other Ingr Product
 router.post("/getOther",[checkJwt, checkRole(["ADMIN"])],ProductController.getOtherIngredients );
 
+//get other Ingr Product
+router.get("/getLatest",[checkJwt, checkRole(["CLIENT"])],ProductController.getLatestProduct );
+
 //Add Ingr Product
 router.post("/addIngredient",[checkJwt, checkRole(["ADMIN"])],ProductController.addIngredients );
 
