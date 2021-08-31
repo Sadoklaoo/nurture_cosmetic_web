@@ -11,7 +11,7 @@ import { Console } from "console";
 
 class HistoryController {
   static add = async (req: Request, res: Response) => {
-    let { SearchString, ProductId, clientId } = req.body;
+    let { ProductId, clientId } = req.body;
 
     const ProductRepository = getRepository(Product);
     const ClientRepository = getRepository(Client);
@@ -48,14 +48,14 @@ class HistoryController {
       console.log(previousDate.toISOString().slice(0, 19).replace("T", " "));
       history = await HistoryRepository.findOne({
         where: {
-          SearchString: SearchString,
+          ConsultedProduct:product.id,
           Client: clientId,
           //  consultedAt: Raw(alias =>`${alias} >= :date `, { date: previousDate.toISOString().slice(0, 19).replace('T', ' ')}),
           consultedAt: Raw(
             (alias) => `TIMESTAMPDIFF(MINUTE,${alias} , NOW())<5`
           ),
         },
-        relations: ["ConsultedProducts"],
+        relations: ["ConsultedProduct"],
       });
 
       if (history) {
@@ -71,9 +71,8 @@ class HistoryController {
     }
 
     if (!exist) {
-      newHistory.SearchString = SearchString;
       newHistory.Client = client;
-      newHistory.ConsultedProducts = [product];
+      newHistory.ConsultedProduct = product;
 
       try {
         await HistoryRepository.save(newHistory);
@@ -84,23 +83,7 @@ class HistoryController {
 
       res.status(201).send("New History inserted.");
     } else {
-      try {
-        console.log("TEST");
-        console.log(history.ConsultedProducts.length);
-        history.ConsultedProducts.push(product);
-      } catch (error) {
-        res.status(404).send(error);
-        return;
-      }
-
-      try {
-        await HistoryRepository.save(history);
-      } catch (error) {
-        res.status(520).send("Insertion error.");
-        return;
-      }
-
-      res.status(201).send("History Product inserted.");
+      res.status(403).send("History Exist");
     }
   };
 
@@ -122,7 +105,10 @@ class HistoryController {
     try {
       clientHistory = await HistoryRepository.find({
         where: { Client: clientId },
-        relations: ["ConsultedProducts","ConsultedProducts.Category"],
+        order:{
+          consultedAt:'DESC'
+        },
+        relations: ["ConsultedProduct","ConsultedProduct.Category"],
       });
 
       res.status(200).send(clientHistory);

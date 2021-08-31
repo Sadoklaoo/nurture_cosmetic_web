@@ -17,12 +17,9 @@ export class History {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  SearchString: string;
 
-  @ManyToMany(() => Product)
-  @JoinTable({name: 'history_consulted',})
-  ConsultedProducts: Product[];
+  @ManyToOne(() => Product)
+  ConsultedProduct: Product;
 
   @Column()
   @CreateDateColumn()
