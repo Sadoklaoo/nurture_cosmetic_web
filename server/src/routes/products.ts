@@ -50,6 +50,8 @@ router.post("/getOther",[checkJwt, checkRole(["ADMIN"])],ProductController.getOt
 
 //get other Ingr Product
 router.get("/getLatest",[checkJwt, checkRole(["CLIENT"])],ProductController.getLatestProduct );
+//get other Ingr Product
+router.get("/getPopular",[checkJwt, checkRole(["CLIENT"])],ProductController.getPopularProduct );
 
 //Add Ingr Product
 router.post("/addIngredient",[checkJwt, checkRole(["ADMIN"])],ProductController.addIngredients );

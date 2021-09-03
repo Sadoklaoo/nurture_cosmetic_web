@@ -12,6 +12,7 @@ import {
 } from "typeorm";
 import { Allergy } from "./Allergy";
 import { Category } from "./Category";
+import { History } from "./History";
 import { Ingredient } from "./Ingredient";
 import { ProductType } from "./ProductType";
 
@@ -62,6 +63,8 @@ export class Product {
   @JoinTable({name: 'product_ingredients',})
   ProductIngredients: Ingredient[];
 
+  @OneToMany(() => History, history => history.ConsultedProduct) // note: we will create author property in the Photo class below
+    History: History[];
 
   @ManyToOne((category) => Category)
   @JoinColumn()

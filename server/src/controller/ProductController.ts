@@ -11,9 +11,30 @@ import { IsNull } from "typeorm";
 import { Category } from "../entities/Category";
 import { Ingredient } from "../entities/Ingredient";
 import { Client } from "../entities/Client";
+import { History } from "../entities/History";
 
 class ProductController {
-  
+  static MostFrequentProduct(array)
+{
+    if(array.length == 0)
+        return null;
+    var modeMap = {};
+    var maxEl = array[0], maxCount = 1;
+    for(var i = 0; i < array.length; i++)
+    {
+        var el = array[i];
+        if(modeMap[el] == null)
+            modeMap[el] = 1;
+        else
+            modeMap[el]++;  
+        if(modeMap[el] > maxCount)
+        {
+            maxEl = el;
+            maxCount = modeMap[el];
+        }
+    }
+    return maxEl;
+};
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
     let {
@@ -299,9 +320,8 @@ class ProductController {
     }
   };
 
-
   static isProductCompatibleToUser = async (req: Request, res: Response) => {
-    let { idProduct,idUser } = req.body;
+    let { idProduct, idUser } = req.body;
     //Get products from database
     const productRepository = getRepository(Product);
     const userRepository = getRepository(Client);
@@ -310,8 +330,8 @@ class ProductController {
     let final_allergies: Allergy[];
     let ingredients;
     try {
-      product = await productRepository.findOneOrFail(idProduct,{
-        relations:["ProductIngredients","ProductIngredients.Allergies"]
+      product = await productRepository.findOneOrFail(idProduct, {
+        relations: ["ProductIngredients", "ProductIngredients.Allergies"],
       });
       final_allergies = [];
       ingredients = product.ProductIngredients;
@@ -336,8 +356,8 @@ class ProductController {
     }
 
     try {
-      user = await userRepository.findOneOrFail(idUser,{
-        relations:["Skin", "Allergies"]
+      user = await userRepository.findOneOrFail(idUser, {
+        relations: ["Skin", "Allergies"],
       });
     } catch (error) {
       //If not found, send a 404 response
@@ -345,25 +365,25 @@ class ProductController {
       return;
     }
 
-    if(user.Skin!=null && (user.Skin.SkinType != product.PreferedSkinType || product.PreferedSkinType !="NORMAL")){
-      res.status(301).send('Skin Type doesnt match')
+    if (
+      user.Skin != null &&
+      (user.Skin.SkinType != product.PreferedSkinType ||
+        product.PreferedSkinType != "NORMAL")
+    ) {
+      res.status(301).send("Skin Type doesnt match");
     }
 
-    user.Allergies.forEach(userAllergy => {
-        final_allergies.forEach(allergy =>{
-          if (allergy.AllergyName == userAllergy.AllergyName){
-            res.status(302).send('Contains triggering allergies');
-          }
-        })
+    user.Allergies.forEach((userAllergy) => {
+      final_allergies.forEach((allergy) => {
+        if (allergy.AllergyName == userAllergy.AllergyName) {
+          res.status(302).send("Contains triggering allergies");
+        }
+      });
     });
 
     console.log(user.isProductCompatible(product));
 
-    res.status(200).send('IsCompatible');
-    
-
-
-
+    res.status(200).send("IsCompatible");
   };
 
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
@@ -385,20 +405,63 @@ class ProductController {
   };
 
   static getLatestProduct = async (req: Request, res: Response) => {
-    
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.findOne({
-      select: ["id", "ProductName", "Price", "Image", "ProductDescription","createdAt"],
+      select: [
+        "id",
+        "ProductName",
+        "Price",
+        "Image",
+        "ProductDescription",
+        "createdAt",
+      ],
       relations: ["Category"],
-      order:{
-        createdAt:"DESC"
-      }
+      order: {
+        createdAt: "DESC",
+      },
     });
 
     //Send the product object
     res.send(products);
   };
+
+  static getPopularProduct = async (req: Request, res: Response) => {
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const historyRepository = getRepository(History);
+
+    const histories = await historyRepository.find({
+      relations: ["ConsultedProduct"],
+    });
+
+    const products = histories.map((history) => {
+      return history.ConsultedProduct.id;
+    });
+
+    
+
+    var id =ProductController.MostFrequentProduct(products);
+
+    const product = await productRepository.findOne({
+      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
+      relations: ["Category"],
+      where:{
+        id:id
+      }
+      
+    });
+
+    /* const product = await productRepository.createQueryBuilder("product")
+    .innerJoinAndSelect("product.Category","category")
+    .innerJoinAndSelect("product.History","history")
+    .getMany();*/
+
+    //Send the product object
+    res.send(product);
+  };
+
+  
 
   static listAllProductsByTypeId = async (req: Request, res: Response) => {
     let { typeName } = req.body;
@@ -471,8 +534,6 @@ class ProductController {
     //Send the product object
     res.send(products);
   };
-
-
 
   static productDetail = async (req: Request, res: Response) => {
     const id = req.params.id;
