@@ -108,6 +108,36 @@
                 placeholder="Score"
               />
           </div>
+          <div class="form-group">
+            <label for="reference" class="label">Position</label>
+            <input
+                
+                type="text"
+                nbInput
+                fullWidth
+                id="reference"
+                placeholder="Position"
+                [(ngModel)]="product.Reference"
+                #Reference
+                id="Reference"
+                name="Position"
+                autofocus
+                id="Reference"
+                fieldSize="large"
+                autofocus
+                [status]="
+                Reference.dirty
+                    ? Reference.invalid
+                      ? 'danger'
+                      : 'success'
+                    : ''
+                "
+                [required]="getConfigValue('forms.validation.Reference.required')"
+                [attr.aria-invalid]="
+                Reference.invalid && Reference.touched ? true : null
+                "
+              />
+          </div>
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
               >Catégorie</label

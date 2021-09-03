@@ -2,29 +2,23 @@ import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS: NbMenuItem[] = [
   {
-    title: 'Allergies',
-    icon: 'sun-outline',
-    home: true,
+    title: 'Catégories',
+    icon: 'grid-outline',
     children: [
       {
-        title: 'Add allergies',
-        link: '/pages/allergies/add-allergy',
+        title: 'List categories',
+        link: '/pages/categories/list-categories',
       },
       {
-        title: 'List allergies',
-        link: '/pages/allergies/list-allergies',
+        title: 'Add category',
+        link: '/pages/categories/add-category',
       },
       {
-        title: 'Affecter allergies/ingredients',
-        link: '/pages/allergies/affect-allergies-ingredients',
+        title: 'Affecter produit/categorie',
+        link: '/pages/categories/affect-produit-categorie',
       },
-    ],
-  },
-  {
-    title: 'Ingrédients',
-    icon: 'clipboard-outline',
-    link: '/pages/ingredients/list-ingredients',
     
+    ],
   },
   {
     title: 'Produits',
@@ -49,6 +43,33 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
+    title: 'Ingrédients',
+    icon: 'clipboard-outline',
+    link: '/pages/ingredients/list-ingredients',
+    
+  },
+  {
+    title: 'Allergies',
+    icon: 'sun-outline',
+    home: true,
+    children: [
+      {
+        title: 'Add allergies',
+        link: '/pages/allergies/add-allergy',
+      },
+      {
+        title: 'List allergies',
+        link: '/pages/allergies/list-allergies',
+      },
+      {
+        title: 'Affecter allergies/ingredients',
+        link: '/pages/allergies/affect-allergies-ingredients',
+      },
+    ],
+  },
+  
+  
+  {
     title: 'Réclamations',
     icon: 'question-mark-circle-outline',
     link: '/pages/reclamations/list-reclamation',
@@ -58,25 +79,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'people-outline',
     link: '/pages/users/list-users',
   },
-  {
-    title: 'Catégories',
-    icon: 'grid-outline',
-    children: [
-      {
-        title: 'List categories',
-        link: '/pages/categories/list-categories',
-      },
-      {
-        title: 'Add category',
-        link: '/pages/categories/add-category',
-      },
-      {
-        title: 'Affecter produit/categorie',
-        link: '/pages/categories/affect-produit-categorie',
-      },
-    
-    ],
-  },
+  
   
  
 ];
