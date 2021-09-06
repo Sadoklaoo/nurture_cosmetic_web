@@ -41,25 +41,25 @@ class ProductController {
       ProductName,
       Reference,
       Price,
-      Category,
-      ProductDescription,
-      ProductSecondDescription,
-      ProductDimensions,
-      PreferedSkinType,
+      Categories,
+      ProductShortDescription,
+      usingAdvice,
+      SkinTypes,
       Image,
       Type,
+      isShown,
     } = req.body;
     let product = new Product();
     product.ProductName = ProductName;
     product.Reference = Reference;
     product.Price = Price;
-    product.Category = Category;
+    product.Categories = Categories;
     product.Rank = 10;
     product.Image = Image;
-    product.ProductDescription = ProductDescription;
-    product.PreferedSkinType = PreferedSkinType;
-    product.ProductSecondDescription = ProductSecondDescription;
-    product.ProductDimensions = ProductDimensions;
+    product.ProductShortDescription = ProductShortDescription;
+    product.SkinTypes = SkinTypes;
+    product.usingAdvice = usingAdvice;
+    product.isShown = isShown;
     product.Type = Type;
 
     //Validade if the parameters are ok
@@ -124,7 +124,7 @@ class ProductController {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
-      relations: ["Category", "ProductIngredients"],
+      relations: ["Categories", "ProductIngredients","SkinTypes","Type"],
     });
 
     //Send the product object
@@ -139,7 +139,7 @@ class ProductController {
     let client;
     try {
       client = await clientRepository.findOneOrFail(id, {
-        relations: ["Favoris", "Favoris.Category"],
+        relations: ["Favoris", "Favoris.Categories"],
       });
     } catch (error) {
       //If not found, send a 404 response
@@ -167,7 +167,7 @@ class ProductController {
     let product;
     try {
       client = await clientRepository.findOne(id, {
-        relations: ["Favoris", "Favoris.Category"],
+        relations: ["Favoris", "Favoris.Categories"],
       });
     } catch (error) {
       //If not found, send a 404 response
@@ -215,7 +215,7 @@ class ProductController {
     let product;
     try {
       client = await clientRepository.findOne(id, {
-        relations: ["Favoris", "Favoris.Category"],
+        relations: ["Favoris", "Favoris.Categories"],
       });
     } catch (error) {
       //If not found, send a 404 response
@@ -276,7 +276,7 @@ class ProductController {
     let ind = -1;
     try {
       client = await clientRepository.findOne(id, {
-        relations: ["Favoris", "Favoris.Category"],
+        relations: ["Favoris", "Favoris.Categories"],
       });
     } catch (error) {
       //If not found, send a 404 response
@@ -390,18 +390,24 @@ class ProductController {
     let { id } = req.body;
     //Get products from database
     const productRepository = getRepository(Product);
+    const categoryRepository = getRepository(Category);
+    let final = [];
+    const category = await categoryRepository.findOne(id);
     const products = await productRepository.find({
-      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
-      relations: ["Category"],
-      where: {
-        Category: {
-          id: id,
-        },
-      },
+      select: ["id", "ProductName", "Price", "Image","ProductShortDescription"],
+      relations: ["Categories"],
+      
+    });
+    products.forEach((product) =>{
+      product.Categories.forEach((cat)=>{
+        if(cat.id ==category.id){
+          final.push(product);
+        }
+      } );
     });
 
     //Send the product object
-    res.send(products);
+    res.send(final);
   };
 
   static getLatestProduct = async (req: Request, res: Response) => {
@@ -413,10 +419,10 @@ class ProductController {
         "ProductName",
         "Price",
         "Image",
-        "ProductDescription",
+        "ProductShortDescription",
         "createdAt",
       ],
-      relations: ["Category"],
+      relations: ["Categories"],
       order: {
         createdAt: "DESC",
       },
@@ -444,8 +450,8 @@ class ProductController {
     var id =ProductController.MostFrequentProduct(products);
 
     const product = await productRepository.findOne({
-      select: ["id", "ProductName", "Price", "Image", "ProductDescription"],
-      relations: ["Category"],
+      select: ["id", "ProductName", "Price", "Image", "ProductShortDescription"],
+      relations: ["Categories"],
       where:{
         id:id
       }
@@ -478,7 +484,7 @@ class ProductController {
       join: {
         alias: "product",
         leftJoinAndSelect: {
-          Category: "product.Category",
+          Category: "product.Categories",
           Type: "product.Type",
         },
       },
@@ -508,28 +514,50 @@ class ProductController {
     res.send(result);
   };
 
-  static listAllProductsWithoutCategory = async (
-    req: Request,
-    res: Response
-  ) => {
-    //Get products from database
-    const productRepository = getRepository(Product);
-    const products = await productRepository.find({
-      where: {
-        Category: {
-          id: IsNull(),
-        },
-      },
-    });
+  // static listAllProductsWithoutCategory = async (
+  //   req: Request,
+  //   res: Response
+  // ) => {
+  //   Get products from database
+  //   const productRepository = getRepository(Product);
+  //   const products = await productRepository.find({
+  //     where: {
+  //       Categories: {
+  //         id: IsNull(),
+  //       },
+  //     },
+  //   });
 
-    //Send the product object
-    res.send(products);
-  };
+  //   Send the product object
+  //   res.send(products);
+  // };
 
   static listAllProductType = async (req: Request, res: Response) => {
     //Get product types from database
     const productRepository = getRepository(ProductType);
     const products = await productRepository.find({});
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static productByReference = async (req: Request, res: Response) => {
+    const {
+      Reference} = req.body
+    let products;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    try {
+      products = await productRepository.findOneOrFail({
+        where: { 
+          Reference:Reference
+        },
+        relations: ["ProductIngredients"],
+      });
+    } catch (error) {
+      res.status(404).send("Product not found");
+      return;
+    }
 
     //Send the product object
     res.send(products);
@@ -542,7 +570,7 @@ class ProductController {
     const productRepository = getRepository(Product);
     try {
       products = await productRepository.findOneOrFail(id, {
-        relations: ["ProductIngredients", "Type", "Category"],
+        relations: ["ProductIngredients", "Type", "Categories","SkinTypes"],
       });
     } catch (error) {
       res.status(404).send("Product not found");
@@ -613,11 +641,11 @@ class ProductController {
       id,
       ProductName,
       Reference,
-      Category,
-      ProductDescription,
-      ProductSecondDescription,
-      ProductDimensions,
-      PreferedSkinType,
+      Categories,
+      ProductShortDescription,
+      isShown,
+      usingAdvice,
+      SkinTypes,
       Type,
       Price,
       Image,
@@ -636,11 +664,11 @@ class ProductController {
 
     //Validate the new values on model
     product.ProductName = ProductName;
-    product.Category = Category;
-    product.ProductDescription = ProductDescription;
-    product.ProductSecondDescription = ProductSecondDescription;
-    product.ProductDimensions = ProductDimensions;
-    product.PreferedSkinType = PreferedSkinType;
+    product.Categories = Categories;
+    product.ProductShortDescription = ProductShortDescription;
+    product.isShown = isShown;
+    product.usingAdvice = usingAdvice;
+    product.SkinTypes = SkinTypes;
     product.Type = Type;
     product.Price = Price;
     product.Image = Image;

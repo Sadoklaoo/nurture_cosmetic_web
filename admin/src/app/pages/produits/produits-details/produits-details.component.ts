@@ -40,8 +40,8 @@ export class ProduitsDetailsComponent implements OnInit {
   selectedTypes: any = [];
   loading = false;
   selectedProduct = 0;
-  selectedCategory = 0;
-  selectedSkin = 0;
+  selectedCategory: any = [];
+  selectedSkin: any = [];
   BaseLink;
   finalTypes: any = [];
   productTypes: any;
@@ -59,20 +59,24 @@ export class ProduitsDetailsComponent implements OnInit {
     this.strategy = this.getConfigValue("forms.login.strategy");
     this.skintypes = [
       {
-        id: 0,
+        id: 1,
         name: "NORMAL",
       },
       {
-        id: 1,
+        id: 2,
         name: "OILED",
       },
       {
-        id: 2,
+        id: 3,
         name: "MIXED",
       },
       {
-        id: 3,
+        id: 4,
         name: "SEC",
+      },
+      {
+        id: 5,
+        name: "SENSITIVE",
       },
     ];
   }
@@ -87,6 +91,7 @@ export class ProduitsDetailsComponent implements OnInit {
   }
 
   editProduct() {
+    console.log(this.selectedProduct)
     if (this.selectedProduct == 0) {
       this.open(
         "Product Error",
@@ -108,39 +113,50 @@ export class ProduitsDetailsComponent implements OnInit {
         });
       });
       this.finalTypes = typees;
-      let category;
-      this.categories.forEach((cat) => {
-        if (cat.id == this.selectedCategory) {
-          category = cat;
-        }
+
+      let category: any = [];;
+      this.selectedCategory.forEach((item) =>{
+        this.categories.forEach((cat) => {
+          if (cat.id == item) {
+            category.push(cat);
+          }
+        });
       });
+
+      let skintypes: any = [];;
+      this.selectedSkin.forEach((item) =>{
+        this.skintypes.forEach((skin) => {
+          if (skin.id == item) {
+            skintypes.push(skin);
+          }
+        });
+      });
+      
 
       if (
         this.currentProduct.ProductName != null &&
         this.currentProduct.ProductName != undefined &&
         this.currentProduct.Price != 0 &&
         this.currentProduct.Price != undefined &&
-        this.currentProduct.ProductDescription != "" &&
-        this.currentProduct.ProductDescription != undefined &&
-        this.currentProduct.ProductSecondDescription != "" &&
-        this.currentProduct.ProductSecondDescription != undefined &&
-        this.currentProduct.ProductDimensions != null &&
-        this.currentProduct.ProductDimensions != undefined
+        this.currentProduct.ProductShortDescription != "" &&
+        this.currentProduct.ProductShortDescription != undefined &&
+        this.currentProduct.usingAdvice != "" &&
+        this.currentProduct.usingAdvice != undefined 
       ) {
         const product = {
           ProductName: this.currentProduct.ProductName,
           id: this.currentProduct.id,
           Reference: this.currentProduct.Reference,
-          Category: category,
-          ProductDescription: this.currentProduct.ProductDescription,
-          ProductSecondDescription:
-            this.currentProduct.ProductSecondDescription,
-          ProductDimensions: this.currentProduct.ProductDimensions,
-          PreferedSkinType: this.skintypes[this.selectedSkin].name,
+          Categories: category,
+          ProductShortDescription: this.currentProduct.ProductShortDescription,
+          isShown:this.currentProduct.isShown,
+          usingAdvice: this.currentProduct.usingAdvice,
+          SkinTypes: skintypes,
           Type: this.finalTypes,
           Price: this.currentProduct.Price,
           Image: imageName,
         };
+        console.log(product);
         this.service.editProduct(product);
       } else {
         this.open("Field Error", "Veuillez completer tout les champs");
@@ -160,19 +176,28 @@ export class ProduitsDetailsComponent implements OnInit {
     this.file = null;
     this.imagePreview = null;
     this.selectedFile = null;
+
     this.loading = true;
     this.service.getCurrentProduct(this.selectedProduct).subscribe((res) => {
       this.currentProduct = res;
       this.productIngredients = this.currentProduct.ProductIngredients;
-      this.setSelectedCategory(this.currentProduct.Category.CategoryName);
-      this.setSelectedSkin(this.currentProduct.PreferedSkinType);
+
       let ty = [];
+      let cate = [];
+      let skn = [];
+      this.currentProduct.SkinTypes.forEach((element) => {
+        skn.push(element.id);
+      });
+      this.currentProduct.Categories.forEach((element) => {
+        cate.push(element.id);
+      });
       this.currentProduct.Type.forEach((element) => {
-        //  this.selectedTypes[this.selectedTypes.length] = element.id;
         ty.push(element.id);
       });
       this.selectedTypes = ty;
-      console.log(this.selectedTypes);
+      this.selectedCategory = cate;
+      this.selectedSkin = skn;
+      console.log(this.selectedCategory);
       this.BaseLink =
         "http://localhost:3000/images/" + this.currentProduct.Image;
     });
@@ -195,12 +220,10 @@ export class ProduitsDetailsComponent implements OnInit {
     return value;
   }
 
-  setSelectedCategory(categoryName) {
-    if (categoryName != null) {
-      this.categories.forEach((category, index) => {
-        if (category.CategoryName == categoryName) {
-          this.selectedCategory = index + 1;
-        }
+  setSelectedCategory() {
+    if (this.currentProduct.Categories != null) {
+      this.currentProduct.Categories.forEach((category, index) => {
+        this.selectedCategory.push(category.id);
       });
     }
   }
@@ -231,7 +254,7 @@ export class ProduitsDetailsComponent implements OnInit {
 
     this.service.listProducts().subscribe((response) => {
       this.product = response;
-      console.log(response);
+      
     });
 
     this.service.listProductType().subscribe((response) => {

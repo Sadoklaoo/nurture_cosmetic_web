@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Allergy } from "./Allergy";
+import { SkinType } from "./SkinType";
 import { Category } from "./Category";
 import { History } from "./History";
 import { Ingredient } from "./Ingredient";
@@ -49,15 +50,18 @@ export class Product {
   Type: ProductType[];
 
   @Column({ type: "longtext" })
-  ProductDescription: string;
+  ProductShortDescription: string;
+
   @Column({ type: "longtext" })
-  ProductSecondDescription: string;
+  usingAdvice: string;
 
   @Column()
-  ProductDimensions: string;
+  isShown: boolean;
 
-  @Column()
-  PreferedSkinType: string;
+
+  @ManyToMany(() => SkinType)
+  @JoinTable({name: 'product_skin_types',})
+  SkinTypes: SkinType[];
 
   @ManyToMany(() => Ingredient)
   @JoinTable({name: 'product_ingredients',})
@@ -66,9 +70,9 @@ export class Product {
   @OneToMany(() => History, history => history.ConsultedProduct) // note: we will create author property in the Photo class below
     History: History[];
 
-  @ManyToOne((category) => Category)
-  @JoinColumn()
-  Category: Category;
+  @ManyToMany((category) => Category)
+  @JoinTable({name: 'product_categories',})
+  Categories: Category[];
 
   isProductSimilar(product: Product) {
     let isSimilar = true;
@@ -111,9 +115,9 @@ export class Product {
       )
     );
 
-    if(this.Category.CategoryName!=product.Category.CategoryName){
+  /*  if(this.Category.CategoryName!=product.Category.CategoryName){
       isSimilar = false;
-    }
+    }*/
     
     
 

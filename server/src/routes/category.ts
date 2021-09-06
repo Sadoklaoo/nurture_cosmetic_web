@@ -22,7 +22,7 @@ router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])],CategoryControlle
 //get all product by category
 router.post("/getAllProductsByCategory",[checkJwt, checkRole(["ADMIN","CLIENT"])],ProductController.listAllProductsByCategoryId  );
 //get all product without category
-router.get("/getAllProductsWithoutCategory",[checkJwt, checkRole(["ADMIN"])],ProductController.listAllProductsWithoutCategory  );
+// router.get("/getAllProductsWithoutCategory",[checkJwt, checkRole(["ADMIN"])],ProductController.listAllProductsWithoutCategory  );
 //update product category
 router.post("/updateProductCategory",[checkJwt, checkRole(["ADMIN"])],ProductController.setProductCategory  );
 

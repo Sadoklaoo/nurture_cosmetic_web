@@ -93,20 +93,13 @@
       </nb-list>
     </nb-card>
 
-    <nb-card class="list-card" size="small">
-      <nb-card-header>Allergies</nb-card-header>
-      <nb-list [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <nb-list-item *ngFor="let user of productAllergies">
-          <nb-user [name]="user.AllergyName" > </nb-user>
-        </nb-list-item>
-      </nb-list>
-    </nb-card>
+  
   </div>
   <div class="col-lg-6">
     <nb-card>
       <nb-card-header>Détails Produit</nb-card-header>
       <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <form (ngSubmit)="editProduct()" #form="ngForm" aria-labelledby="title">
+        <form (ngSubmit)="editProduct()" #form="ngForm"  aria-labelledby="title">
           <div class="form-group">
             <label for="nom" class="label">Nom Produit</label>
             <div *ngIf="currentProduct; else elseBlock">
@@ -123,6 +116,23 @@
             </div>
             <ng-template #elseBlock>
               <input type="text" nbInput fullWidth id="nom" placeholder="Nom" />
+            </ng-template>
+          </div>
+          <div class="form-group">
+           
+            <div *ngIf="currentProduct; else elseBlock22">
+              <nb-toggle
+                  status="primary"
+                  [(checked)]="currentProduct.isShown"
+                  labelPosition="start"
+                  >Afficher</nb-toggle>
+             
+            </div>
+            <ng-template #elseBlock22>
+              <nb-toggle
+                  status="primary"
+                  labelPosition="start"
+                  >Afficher</nb-toggle>
             </ng-template>
           </div>
           <div class="form-group">
@@ -206,7 +216,7 @@
               >Catégorie</label
             >
 
-            <nb-select [(selected)]="selectedCategory">
+            <nb-select multiple [(selected)]="selectedCategory" >
               <nb-option *ngFor="let u of categories" [value]="u.id">{{
                 u.CategoryName
               }}</nb-option>
@@ -234,40 +244,16 @@
             <label for="reference" class="label col-sm-3 col-form-label"
               >Peau suggéré</label
             >
-            <nb-select [(selected)]="selectedSkin">
+            <nb-select multiple [(selected)]="selectedSkin">
               <nb-option *ngFor="let u of skintypes" [value]="u.id">{{
                 u.name
               }}</nb-option>
             </nb-select>
           </div>
-          <div class="form-group">
-            <label for="rank" class="label">Dimensions</label>
-            <div *ngIf="currentProduct; else elseBlock4">
-              <input
-                type="text"
-                nbInput
-                fullWidth
-                id="Dimensions"
-                placeholder="Dimensions"
-                name="Dimensions"
-                #Dimensions="ngModel"
-                [(ngModel)]="currentProduct.ProductDimensions"
-              />
-            </div>
-            <ng-template #elseBlock4>
-              <input
-                disabled
-                type="text"
-                nbInput
-                fullWidth
-                id="Dimensions"
-                placeholder="Dimensions"
-              />
-            </ng-template>
-          </div>
+          
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
-              >Description
+              >Short Description
             </label>
             <div *ngIf="currentProduct; else elseBlock6">
               <textarea
@@ -277,7 +263,7 @@
                 placeholder="Description Area"
                 name="Description"
                 #Description="ngModel"
-                [(ngModel)]="currentProduct.ProductDescription"
+                [(ngModel)]="currentProduct.ProductShortDescription"
               ></textarea>
             </div>
             <ng-template #elseBlock6>
@@ -285,14 +271,14 @@
                 rows="5"
                 nbInput
                 fullWidth
-                placeholder="Description Area"
+                placeholder="Short Description Area"
               ></textarea>
             </ng-template>
           </div>
 
           <div class="form-group row">
             <label for="reference" class="label col-sm-3 col-form-label"
-              >Autre description
+              >Conseille d’utilisation
             </label>
             <div *ngIf="currentProduct; else elseBlock7">
               <textarea
@@ -301,8 +287,8 @@
                 fullWidth
                 name="Second Description"
                 #SecondDescription="ngModel"
-                [(ngModel)]="currentProduct.ProductSecondDescription"
-                placeholder="Second Description Area"
+                [(ngModel)]="currentProduct.usingAdvice"
+                placeholder="Conseille d’utilisation"
               ></textarea>
             </div>
             <ng-template #elseBlock7>

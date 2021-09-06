@@ -1,18 +1,23 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { NbAuthJWTToken, NbAuthService } from '@nebular/auth';
-import { NbComponentStatus, NbToastrService } from '@nebular/theme';
-import { environment } from '../../environments/environment';
-import { Allergy } from '../entities/Allergy';
-import { Product } from '../entities/Product';
-import { ProductType } from '../entities/ProductType';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { NbAuthJWTToken, NbAuthService } from "@nebular/auth";
+import { NbComponentStatus, NbToastrService } from "@nebular/theme";
+import { environment } from "../../environments/environment";
+import { Allergy } from "../entities/Allergy";
+import { Product } from "../entities/Product";
+import { ProductType } from "../entities/ProductType";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ProductService {
   token: any;
   private index: number = 0;
+   control :String;
   private httpOptions;
   constructor(
     private http: HttpClient,
@@ -34,7 +39,7 @@ export class ProductService {
     });
   }
 
-  editProductCategory( idProduct: number,idCategory: number) {
+  editProductCategory(idProduct: number, idCategory: number) {
     const category = { idProduct, idCategory };
     console.log("Category Inside SERVICE");
     console.log(category);
@@ -67,26 +72,14 @@ export class ProductService {
   }
 
   showToastEdit(status: NbComponentStatus) {
-    this.toastrService.show(
-      status,
-      `PRODUCT EDITED SUCCESSFULLY`,
-      { status }
-    );
+    this.toastrService.show(status, `PRODUCT EDITED SUCCESSFULLY`, { status });
   }
 
   showToastDelete(status: NbComponentStatus) {
-    this.toastrService.show(
-      status,
-      `PRODUCT DELETED SUCCESSFULLY`,
-      { status }
-    );
+    this.toastrService.show(status, `PRODUCT DELETED SUCCESSFULLY`, { status });
   }
   showToastDeleteError(status: NbComponentStatus) {
-    this.toastrService.show(
-      status,
-      `PRODUCT DELETED ERROR`,
-      { status }
-    );
+    this.toastrService.show(status, `PRODUCT DELETED ERROR`, { status });
   }
 
   listProducts() {
@@ -96,14 +89,15 @@ export class ProductService {
     );
   }
   showToast(status: NbComponentStatus) {
-    this.toastrService.show(
-      status,
-      `PRODUCT ADDED SUCCESSFULLY`,
-      { status }
-    );
+    this.toastrService.show(status, `PRODUCT ADDED SUCCESSFULLY`, { status });
+  }
+  showToastReference(status: NbComponentStatus) {
+    this.toastrService.show(status, `REFERENCE EXIST`, { status });
   }
 
- 
+  showToastData(status: NbComponentStatus) {
+    this.toastrService.show(status, `MISSING DATA`, { status });
+  }
 
   public uploadImage(image: File) {
     const formData = new FormData();
@@ -113,72 +107,57 @@ export class ProductService {
     return this.http.post(environment.upload, formData);
   }
 
-  addProduct(ProductName: String,
+  async addProduct(
+    ProductName: String,
     Reference: String,
     Price: number,
-    Category: any,
-    ProductDescription: String,
-    ProductSecondDescription: String,
-    ProductDimensions: String,
-    Type:any,
-    PreferedSkinType: String,
-     Image: String) {
-    const product = { ProductName,Reference,
-      Category,
-      ProductDescription,
-      ProductSecondDescription,
-      ProductDimensions,
-      PreferedSkinType,
+    Categories: any,
+    ProductShortDescription: String,
+    usingAdvice: String,
+    isShown : boolean,
+    Type: any,
+    SkinTypes: any,
+    Image: String
+  ) {
+    const product = {
+      ProductName,
+      Reference,
+      Categories,
+      ProductShortDescription,
+      usingAdvice,
+      SkinTypes,
       Type,
-      Price, Image };
+      Price,
+      Image,
+      isShown
+    };
     console.log("product Inside SERVICE");
     console.log(product);
-
-    this.http.post(environment.addProduct, product, this.httpOptions).subscribe(
-      (response) => {
-        //    console.log(this.getAuthData().token)
-        console.log(response);
-      },
-      (error: HttpErrorResponse) => {
-        console.log("HTTPERROR");
-        console.log(error);
-        // tslint:disable-next-line: triple-equals
-        if (error.status == 404) {
-          console.log("Please Verify storeID");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 409) {
-          console.log("reference is already exist");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 400) {
-          console.log("missing data");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 201) {
-          this.showToast("success");
-        }
-      }
-    );
+    
+    return this.http.post(environment.addProduct, product, this.httpOptions)
+  
   }
 
-  getOther(id: number,) {
+  getOther(id: number) {
     const product = { id };
     console.log("product Inside SERVICE");
     console.log(product);
 
-  return  this.http.post(environment.getOtherIngredientByProduct, product, this.httpOptions);
+    return this.http.post(
+      environment.getOtherIngredientByProduct,
+      product,
+      this.httpOptions
+    );
   }
   showIngredientToast(status: NbComponentStatus) {
-    this.toastrService.show(
+    this.toastrService.show(status, `Ingredient Added SUCCESSFULLY`, {
       status,
-      `Ingredient Added SUCCESSFULLY`,
-      { status }
-    );
+    });
   }
   showDelIngredientToast(status: NbComponentStatus) {
-    this.toastrService.show(
+    this.toastrService.show(status, `Ingredient Deleted SUCCESSFULLY`, {
       status,
-      `Ingredient Deleted SUCCESSFULLY`,
-      { status }
-    );
+    });
   }
 
   addIngredientProduct(id: number, IngredientId: number) {
@@ -186,29 +165,31 @@ export class ProductService {
     console.log("Product Inside SERVICE");
     console.log(Product);
 
-    this.http.post(environment.addIngredientProduct, Product, this.httpOptions).subscribe(
-      (response) => {
-        //    console.log(this.getAuthData().token)
-        console.log(response);
-      },
-      (error: HttpErrorResponse) => {
-        console.log("HTTPERROR");
-        console.log(error);
-        // tslint:disable-next-line: triple-equals
-        if (error.status == 404) {
-          console.log("Please Verify storeID");
+    this.http
+      .post(environment.addIngredientProduct, Product, this.httpOptions)
+      .subscribe(
+        (response) => {
+          //    console.log(this.getAuthData().token)
+          console.log(response);
+        },
+        (error: HttpErrorResponse) => {
+          console.log("HTTPERROR");
+          console.log(error);
           // tslint:disable-next-line: triple-equals
-        } else if (error.status == 409) {
-          console.log("reference is already exist");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 400) {
-          console.log("missing data");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 200) {
-          this.showIngredientToast("success");
+          if (error.status == 404) {
+            console.log("Please Verify storeID");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 409) {
+            console.log("reference is already exist");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 400) {
+            console.log("missing data");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 200) {
+            this.showIngredientToast("success");
+          }
         }
-      }
-    );
+      );
   }
 
   deleteIngredientProduct(id: number, IngredientId: number) {
@@ -216,58 +197,63 @@ export class ProductService {
     console.log("Product Inside SERVICE");
     console.log(Product);
 
-    this.http.post(environment.deleteIngredientProduct, Product, this.httpOptions).subscribe(
-      (response) => {
-        //    console.log(this.getAuthData().token)
-        console.log(response);
-      },
-      (error: HttpErrorResponse) => {
-        console.log("HTTPERROR");
-        console.log(error);
-        // tslint:disable-next-line: triple-equals
-        if (error.status == 404) {
-          console.log("Please Verify storeID");
+    this.http
+      .post(environment.deleteIngredientProduct, Product, this.httpOptions)
+      .subscribe(
+        (response) => {
+          //    console.log(this.getAuthData().token)
+          console.log(response);
+        },
+        (error: HttpErrorResponse) => {
+          console.log("HTTPERROR");
+          console.log(error);
           // tslint:disable-next-line: triple-equals
-        } else if (error.status == 409) {
-          console.log("reference is already exist");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 400) {
-          console.log("missing data");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 200) {
-          this.showDelIngredientToast("danger");
+          if (error.status == 404) {
+            console.log("Please Verify storeID");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 409) {
+            console.log("reference is already exist");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 400) {
+            console.log("missing data");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 200) {
+            this.showDelIngredientToast("danger");
+          }
         }
-      }
-    );
+      );
   }
 
-  editProduct(product:any) {
+  editProduct(product: any) {
     console.log("product Inside SERVICE");
     console.log(product);
 
-    this.http.post(environment.editProduct, product, this.httpOptions).subscribe(
-      (response) => {
-        //    console.log(this.getAuthData().token)
-        console.log(response);this.showToastEdit("success");
-      },
-      (error: HttpErrorResponse) => {
-        console.log("HTTPERROR");
-        console.log(error);
-        // tslint:disable-next-line: triple-equals
-        if (error.status == 404) {
-          console.log("Please Verify storeID");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 409) {
-          console.log("reference is already exist");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 400) {
-          console.log("missing data");
-          // tslint:disable-next-line: triple-equals
-        } else if (error.status == 204) {
+    this.http
+      .post(environment.editProduct, product, this.httpOptions)
+      .subscribe(
+        (response) => {
+          //    console.log(this.getAuthData().token)
+          console.log(response);
           this.showToastEdit("success");
+        },
+        (error: HttpErrorResponse) => {
+          console.log("HTTPERROR");
+          console.log(error);
+          // tslint:disable-next-line: triple-equals
+          if (error.status == 404) {
+            console.log("Please Verify storeID");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 409) {
+            console.log("reference is already exist");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 400) {
+            console.log("missing data");
+            // tslint:disable-next-line: triple-equals
+          } else if (error.status == 204) {
+            this.showToastEdit("success");
+          }
         }
-      }
-    );
+      );
   }
 
   listProductType() {
@@ -277,9 +263,9 @@ export class ProductService {
     );
   }
 
-  listProductAllergy(id:number) {
+  listProductAllergy(id: number) {
     return this.http.get<Allergy[]>(
-      environment.getProductAllergies+id,
+      environment.getProductAllergies + id,
       this.httpOptions
     );
   }
@@ -287,6 +273,16 @@ export class ProductService {
   getCurrentProduct(id: number) {
     return this.http.get<Product>(
       environment.detailsProduct + id,
+      this.httpOptions
+    );
+  }
+  getProductByReference(Reference: string) {
+    const product = {
+      Reference
+    };
+    return this.http.post<Product>(
+      environment.getProductByReference,
+      product,
       this.httpOptions
     );
   }

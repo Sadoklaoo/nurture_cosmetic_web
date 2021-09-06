@@ -40,16 +40,7 @@ export class ListProduitsComponent implements OnInit {
         title: 'Rang',
         type: 'number',
       },
-      PreferedSkinType: {
-        title: 'Peau Préferé',
-        type: 'string',
-      },
-      Category: {
-        title: 'Catégorie',
-        type: 'string',
-        valuePrepareFunction: (data) => { return data.CategoryName }
-
-      },
+      
      
     },
   };

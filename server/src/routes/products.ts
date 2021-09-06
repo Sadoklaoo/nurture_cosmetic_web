@@ -45,6 +45,10 @@ router.post("/isProductCompatible",[checkJwt, checkRole(["ADMIN","CLIENT"])], Pr
 //get product allergies
 router.get("/getProductAllergy/:id([0-9]+)",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.productAllergies );
 
+//get product by reference
+router.post("/getProductByReference",[checkJwt, checkRole(["ADMIN"])], ProductController.productByReference );
+
+
 //get other Ingr Product
 router.post("/getOther",[checkJwt, checkRole(["ADMIN"])],ProductController.getOtherIngredients );
 

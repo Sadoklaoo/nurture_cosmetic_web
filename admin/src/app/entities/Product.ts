@@ -1,4 +1,6 @@
+import { SkinType } from './SkinType';
 import { Category } from "./Category";
+
 
 export class Product {
 
@@ -8,9 +10,9 @@ export class Product {
     Price: number;
     Rank: number;
     Image: string;
-    ProductDescription: string;
-    ProductSecondDescription: string;
-    ProductDimensions: string;
-    PreferedSkinType: string;
-    Category: Category;
+    ProductShortDescription: string;
+    usingAdvice: string;
+    isShown: boolean;
+    Skintypes: SkinType[];
+    Category: Category[];
    }

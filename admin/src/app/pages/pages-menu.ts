@@ -13,10 +13,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
         title: 'Add category',
         link: '/pages/categories/add-category',
       },
-      {
-        title: 'Affecter produit/categorie',
-        link: '/pages/categories/affect-produit-categorie',
-      },
+    
     
     ],
   },

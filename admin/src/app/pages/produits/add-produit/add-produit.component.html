@@ -1,326 +1,432 @@
 <div class="row">
-  <div class="col-lg-6">
+  <div class="col-md-12">
     <nb-card>
       <nb-card-header>Ajouter Produit</nb-card-header>
+
       <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <form (ngSubmit)="addProduct()" #form="ngForm" aria-labelledby="title">
-          <div class="form-group">
-            <label for="nom" class="label">Nom Produit</label>
-            
-              <input type="text" 
-              nbInput 
-              fullWidth 
-              id="nom" 
-              placeholder="Nom Produit" 
-              [(ngModel)]="product.ProductName"
-                #ProductName
-                id="ProductName"
-                name="ProductName"
-                autofocus
-                id="ProductName"
-                fieldSize="large"
-                autofocus
-                [status]="
-                ProductName.dirty
-                    ? ProductName.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.ProductName.required')"
-                [attr.aria-invalid]="
-                ProductName.invalid && ProductName.touched ? true : null
-                "
-              />
-              <ng-container *ngIf="ProductName.invalid && ProductName.touched">
-                <p class="error-message" *ngIf="ProductName.errors?.required">
+        <nb-stepper orientation="horizontal" #stepper [linear]="linearMode">
+          <nb-step [stepControl]="generalForm" label="Général">
+            <form #generalForm="ngForm" class="step-container">
+              <div class="form-group">
+                <label for="nom" class="label">Nom Produit</label>
+                <input
+                  type="text"
+                  nbInput
+                  fullWidth
+                  id="nom"
+                  placeholder="Nom Produit"
+                  [(ngModel)]="product.ProductName"
+                  #ProductName
+                  id="ProductName"
+                  name="ProductName"
+                  autofocus
+                  id="ProductName"
+                  fieldSize="large"
+                  autofocus
+                  [status]="
+                    ProductName.dirty
+                      ? ProductName.invalid
+                        ? 'danger'
+                        : 'success'
+                      : ''
+                  "
+                  required
+                  [attr.aria-invalid]="
+                    ProductName.invalid && ProductName.touched ? true : null
+                  "
+                />
+                <ng-container
+                  *ngIf="ProductName.invalid && ProductName.touched"
+                >
+                  <p class="error-message" *ngIf="ProductName.errors?.required">
                     ProductName is required
-                </p>
-              </ng-container>
-          </div>
-          <div class="form-group">
-            <label for="reference" class="label">Référence</label>
-            <input
-                
-                type="text"
-                nbInput
-                fullWidth
-                id="reference"
-                placeholder="Référence"
-                [(ngModel)]="product.Reference"
-                #Reference
-                id="Reference"
-                name="Reference"
-                autofocus
-                id="Reference"
-                fieldSize="large"
-                autofocus
-                [status]="
-                Reference.dirty
-                    ? Reference.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.Reference.required')"
-                [attr.aria-invalid]="
-                Reference.invalid && Reference.touched ? true : null
-                "
-              />
-          </div>
-          <div class="form-group">
-            <label for="price" class="label">Prix</label>
-            <input
-            type="number"
-            nbInput
-            fullWidth
-            id="price"
-            placeholder="Prix"
-            [(ngModel)]="product.Price"
-                #Price
-                id="Price"
-                name="Price"
-                autofocus
-                id="Price"
-                fieldSize="large"
-                autofocus
-                [status]="
-                Price.dirty
-                    ? Price.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.Price.required')"
-                [attr.aria-invalid]="
-                Price.invalid && Price.touched ? true : null
-                "
-          />
-          </div>
-          <div class="form-group">
-            <label for="rank" class="label">Score</label>
-            <input
-                disabled
-                type="text"
-                nbInput
-                fullWidth
-                id="score"
-                placeholder="Score"
-              />
-          </div>
-          <div class="form-group">
-            <label for="reference" class="label">Position</label>
-            <input
-                
-                type="text"
-                nbInput
-                fullWidth
-                id="reference"
-                placeholder="Position"
-                [(ngModel)]="product.Reference"
-                #Reference
-                id="Reference"
-                name="Position"
-                autofocus
-                id="Reference"
-                fieldSize="large"
-                autofocus
-                [status]="
-                Reference.dirty
-                    ? Reference.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.Reference.required')"
-                [attr.aria-invalid]="
-                Reference.invalid && Reference.touched ? true : null
-                "
-              />
-          </div>
-          <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Catégorie</label
-            >
-
-            <nb-select [(selected)]="selectedCategory">
-              <nb-option *ngFor="let u of categories" [value]="u.id">{{
-                u.CategoryName
-              }}</nb-option>
-            </nb-select>
-          </div>
-          <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Type</label
-            >
-            <div>
-              <div *ngFor="let u of productTypes">
-                <nb-checkbox (change)="toggle($event,u)">{{ u.TypeName }}</nb-checkbox>
-                <br />
+                  </p>
+                </ng-container>
               </div>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Peau suggéré</label
-            >
-            <nb-select [(selected)]="selectedSkin">
-              <nb-option *ngFor="let u of skintypes" [value]="u.id">{{
-                u.name
-              }}</nb-option>
-            </nb-select>
-          </div>
-          <div class="form-group">
-            <label for="rank" class="label">Dimensions</label>
-            <input
-                type="text"
-                nbInput
-                fullWidth
-                id="Dimensions"
-                placeholder="Dimensions"
-                [(ngModel)]="product.ProductDimensions"
-                #ProductDimensions
-                id="ProductDimensions"
-                name="ProductDimensions"
-                autofocus
-                id="ProductDimensions"
-                fieldSize="large"
-                autofocus
-                [status]="
-                ProductDimensions.dirty
-                    ? ProductDimensions.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.ProductDimensions.required')"
-                [attr.aria-invalid]="
-                ProductDimensions.invalid && ProductDimensions.touched ? true : null
-                "
-              />
-          </div>
-          <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Description
-            </label>
-            <textarea
-                rows="5"
-                nbInput
-                fullWidth
-                placeholder="Description Area"
-                [(ngModel)]="product.ProductDescription"
-                #ProductDescription
-                id="ProductDescription"
-                name="ProductDescription"
-                autofocus
-                id="ProductDescription"
-                fieldSize="large"
-                autofocus
-                [status]="
-                ProductDescription.dirty
-                    ? ProductDescription.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
-                "
-                [required]="getConfigValue('forms.validation.ProductDescription.required')"
-                [attr.aria-invalid]="
-                ProductDescription.invalid && ProductDescription.touched ? true : null
-                "
-              ></textarea>
-          </div>
+              <div class="form-group">
+                <label for="reference" class="label">Référence</label>
+                <input
+                  type="text"
+                  nbInput
+                  fullWidth
+                  id="reference"
+                  placeholder="Référence"
+                  [(ngModel)]="product.Reference"
+                  #Reference
+                  id="Reference"
+                  name="Reference"
+                  autofocus
+                  id="Reference"
+                  fieldSize="large"
+                  autofocus
+                  [status]="
+                    Reference.dirty
+                      ? Reference.invalid
+                        ? 'danger'
+                        : 'success'
+                      : ''
+                  "
+                  required
+                  [attr.aria-invalid]="
+                    Reference.invalid && Reference.touched ? true : null
+                  "
+                />
+              </div>
+              <div class="form-group">
+                <label for="price" class="label">Prix</label>
+                <input
+                  type="number"
+                  nbInput
+                  fullWidth
+                  id="price"
+                  placeholder="Prix"
+                  [(ngModel)]="product.Price"
+                  #Price
+                  id="Price"
+                  name="Price"
+                  autofocus
+                  id="Price"
+                  fieldSize="large"
+                  autofocus
+                  [status]="
+                    Price.dirty ? (Price.invalid ? 'danger' : 'success') : ''
+                  "
+                  required
+                  [attr.aria-invalid]="
+                    Price.invalid && Price.touched ? true : null
+                  "
+                />
+              </div>
+              <div class="form-group">
+                <nb-toggle
+                  status="primary"
+                  [(checked)]="checked"
+                  labelPosition="start"
+                  >Afficher</nb-toggle
+                >
+              </div>
 
-          <div class="form-group row">
-            <label for="reference" class="label col-sm-3 col-form-label"
-              >Autre description
-            </label>
-            <textarea
-                rows="5"
-                nbInput
+              <!-- <div class="form-group">
+                <label for="reference" class="label">Position</label>
+                <input
+                    
+                    type="text"
+                    nbInput
+                    fullWidth
+                    id="reference"
+                    placeholder="Position"
+                    [(ngModel)]="product.Reference"
+                    #Reference
+                    id="Reference"
+                    name="Position"
+                    autofocus
+                    id="Reference"
+                    fieldSize="large"
+                    autofocus
+                    [status]="
+                    Reference.dirty
+                        ? Reference.invalid
+                          ? 'danger'
+                          : 'success'
+                        : ''
+                    "
+                    required
+                    [attr.aria-invalid]="
+                    Reference.invalid && Reference.touched ? true : null
+                    "
+                  />
+              </div> -->
+              <button nbButton nbStepperNext>next</button>
+            </form>
+          </nb-step>
+          <nb-step [stepControl]="CategoryForm" label="Spécifique">
+            <form #CategoryForm="ngForm" class="step-container">
+              <div class="form-group row">
+                <label for="reference" class="label col-sm-3 col-form-label"
+                  >Categories</label
+                >
+                <nb-select multiple [(selected)]="selectedCategory">
+                  <nb-option *ngFor="let u of categories" [value]="u.id">{{
+                    u.CategoryName
+                  }}</nb-option>
+                </nb-select>
+              </div>
+              <div class="form-group row">
+                <label for="reference" class="label col-sm-3 col-form-label"
+                  >Type</label
+                >
+                <nb-select required multiple [(selected)]="selectedTypes">
+                  <nb-option *ngFor="let u of productTypes" [value]="u.id">{{
+                    u.TypeName
+                  }}</nb-option>
+                </nb-select>
+              </div>
+
+              <div class="form-group row">
+                <label for="reference" class="label col-sm-3 col-form-label"
+                  >Peau suggéré</label
+                >
+                <nb-select required multiple [(selected)]="selectedSkin">
+                  <nb-option *ngFor="let u of skintypes" [value]="u.id">{{
+                    u.SkinTypeName
+                  }}</nb-option>
+                </nb-select>
+              </div>
+              <button nbButton nbStepperPrevious>prev</button>
+              <button nbButton (click)="categoriesValidation()">next</button>
+            </form>
+          </nb-step>
+          <nb-step [stepControl]="DescriptionForm" label="Description">
+            <form #DescriptionForm="ngForm" class="step-container">
+              <div class="form-group row">
+                <label for="reference" class="label col-sm-3 col-form-label"
+                  >Short Description
+                </label>
+                <textarea
+                  rows="5"
+                  nbInput
+                  fullWidth
+                  placeholder="Short Description Area"
+                  [(ngModel)]="product.ProductShortDescription"
+                  #ProductDescription
+                  id="ProductDescription"
+                  name="ProductDescription"
+                  autofocus
+                  fieldSize="large"
+                  autofocus
+                  [status]="
+                    ProductDescription.dirty
+                      ? ProductDescription.invalid
+                        ? 'danger'
+                        : 'success'
+                      : ''
+                  "
+                  required
+                  [attr.aria-invalid]="
+                    ProductDescription.invalid && ProductDescription.touched
+                      ? true
+                      : null
+                  "
+                ></textarea>
+              </div>
+
+              <div class="form-group row">
+                <label for="reference" class="label col-sm-3 col-form-label"
+                  >Conseille d’utilisation
+                </label>
+                <textarea
+                  rows="5"
+                  nbInput
+                  required
+                  fullWidth
+                  placeholder="Conseille d’utilisation"
+                  [(ngModel)]="product.usingAdvice"
+                  #ProductSecondDescription
+                  id="ProductSecondDescription"
+                  name="ProductSecondDescription"
+                  autofocus
+                  id="ProductSecondDescription"
+                  fieldSize="large"
+                  autofocus
+                  [status]="
+                    ProductSecondDescription.dirty
+                      ? ProductSecondDescription.invalid
+                        ? 'danger'
+                        : 'success'
+                      : ''
+                  "
+                  [attr.aria-invalid]="
+                    ProductSecondDescription.invalid &&
+                    ProductSecondDescription.touched
+                      ? true
+                      : null
+                  "
+                ></textarea>
+              </div>
+              <button nbButton nbStepperPrevious>prev</button>
+              <button nbButton nbStepperNext (click)="onFirstSubmit()">
+                next
+              </button>
+            </form>
+          </nb-step>
+          <nb-step [stepControl]="ImageForm" label="Image">
+            <form
+              #ImageForm="ngForm"
+              (ngSubmit)="onFirstSubmit()"
+              class="step-container"
+            >
+              <button
+                nbButton
                 fullWidth
-                placeholder="Autre description "
-                [(ngModel)]="product.ProductSecondDescription"
-                #ProductSecondDescription
-                id="ProductSecondDescription"
-                name="ProductSecondDescription"
-                autofocus
-                id="ProductSecondDescription"
-                fieldSize="large"
-                autofocus
-                [status]="
-                ProductSecondDescription.dirty
-                    ? ProductSecondDescription.invalid
-                      ? 'danger'
-                      : 'success'
-                    : ''
+                status="primary"
+                size="large"
+                outline
+                status="primary"
+                type="button"
+                (click)="filePicker.click()"
+              >
+                <nb-icon icon="save"></nb-icon> Changer image
+              </button>
+              <br />
+              <br />
+              <input
+                required
+                type="file"
+                input
+                #imageInput
+                #filePicker
+                accept="image/*"
+                (change)="processFile(imageInput)"
+              />
+
+              <div
+                class="image-preview"
+                *ngIf="
+                  imagePreview !== '' &&
+                  imagePreview &&
+                  registerForm.get('image').valid
                 "
-                [required]="getConfigValue('forms.validation.ProductSecondDescription.required')"
-                [attr.aria-invalid]="
-                ProductSecondDescription.invalid && ProductSecondDescription.touched ? true : null
-                "
-              ></textarea>
-          </div>
-          <button type="submit" fullWidth nbButton [disabled]="submitted || !form.valid"
-          [class.btn-pulse]="submitted" status="success">
-            Ajouter
-          </button>
-        </form>
+              >
+                <img
+                  [src]="imagePreview"
+                  class="displayed"
+                  style="
+                    width: auto;
+                    height: 150px;
+                    align-content: center;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                  "
+                />
+              </div>
+
+              <button nbButton nbStepperPrevious>prev</button>
+              <button nbButton (click)="addProduct()">next</button>
+            </form>
+          </nb-step>
+          <nb-step [hidden]="true">
+            <div class="step-container">
+              <h3>Product Inserted!</h3>
+              <button nbButton (click)="onReset()">Again</button>
+              <button nbButton nbStepperNext>Add Ingredients</button>
+            </div>
+          </nb-step>
+          <nb-step [stepControl]="IngredientsForm" label="Ingredients">
+            <form #IngredientsForm="ngForm" class="step-container">
+              <div class="lists row">
+                <div class="col-md-6 col-lg-6 col-xxxl-6">
+                  <nb-card
+                    class="list-card"
+                    size="small"
+                    [nbSpinner]="loading"
+                    nbSpinnerStatus="primary"
+                  >
+                    <nb-card-header>Ingrédients de produit </nb-card-header>
+                    <br />
+                    <nb-form-field>
+                      <nb-icon
+                        nbPrefix
+                        icon="search-outline"
+                        pack="eva"
+                      ></nb-icon>
+                      <input
+                      #search
+                        type="text"
+                        placeholder="Search..."
+                        [(ngModel)]="searchString"
+                        fullWidth
+                        nbInput
+                        (input)="SearchIngredient(search.value)"
+                      />
+                    </nb-form-field>
+                    <br />
+                    <nb-list>
+                      <nb-list-item
+                        *ngFor="let ingr of product.ProductIngredients"
+                      >
+                        <button
+                          nbButton
+                          hero
+                          status="danger"
+                          type="submit"
+                          (click)="onDelete(ingr.id)"
+                        >
+                          <nb-icon icon="trash"></nb-icon>
+                        </button>
+                        <nb-user
+                          [name]="ingr.IngredientName"
+                          [title]="ingr.IngredientType"
+                        >
+                        </nb-user>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card>
+                </div>
+                <div class="col-lg-6">
+                  <nb-card
+                    class="list-card"
+                    size="small"
+                    [nbSpinner]="loading"
+                    nbSpinnerStatus="primary"
+                  >
+                    <nb-card-header>Autres Ingrédients </nb-card-header>
+                    <br />
+
+                    <nb-form-field>
+                      <nb-icon
+                        nbPrefix
+                        icon="search-outline"
+                        pack="eva"
+                      ></nb-icon>
+                      <input
+                      #searchOthers
+                        type="text"
+                        placeholder="Search..."
+                        [(ngModel)]="searchStringOthers"
+                        fullWidth
+                        nbInput
+                        (input)="Search(searchOthers.value)"
+                      />
+                    </nb-form-field>
+
+                    <br />
+                    <nb-list>
+                      <nb-list-item *ngFor="let user of Others">
+                        <button
+                          nbButton
+                          hero
+                          type="submit"
+                          status="primary"
+                          (click)="onAdd(user.id)"
+                        >
+                          <nb-icon icon="plus"></nb-icon>
+                        </button>
+                        <nb-user
+                          [name]="user.IngredientName"
+                          [title]="user.IngredientType"
+                        >
+                        </nb-user>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card>
+                </div>
+              </div>
+
+              <button nbButton nbStepperPrevious>Cancel</button>
+              <button nbButton nbStepperNext>Confirm</button>
+            </form>
+          </nb-step>
+          <nb-step [hidden]="true">
+            <div class="step-container">
+              <h3>Ingredients Inserted!</h3>
+              <button nbButton (click)="onReset()">Restart</button>
+            </div>
+          </nb-step>
+          
+        </nb-stepper>
       </nb-card-body>
     </nb-card>
   </div>
-  <div class="col-lg-6">
-      
-  
-    <nb-card>
-      <nb-card-header>Image du Produit</nb-card-header>
-      <nb-card-body [nbSpinner]="loading" nbSpinnerStatus="primary">
-        <button
-              nbButton
-              fullWidth
-              status="primary"
-              size="large"
-              
-              outline status="primary"
-              type="button"
-              (click)="filePicker.click()"
-            >
-            <nb-icon icon="save"></nb-icon> Changer image
-            </button>
-            <br />
-            <br />
-            <input
-              type="file"
-              input
-              #imageInput
-              #filePicker
-              accept="image/*"
-              (change)="processFile(imageInput)"
-            />
-      
-            <div
-              class="image-preview"
-              *ngIf="
-                imagePreview !== '' && imagePreview && registerForm.get('image').valid
-              "
-            >
-              <img
-                [src]="imagePreview"
-                class="displayed"
-                style="
-                  width: auto;
-                  height: 150px;
-                  align-content: center;
-                  display: block;
-                  margin-left: auto;
-                  margin-right: auto;
-                "
-              />
-            </div>
-            <br />
-            <br />
-        
-      </nb-card-body>
-    </nb-card>
-
-  </div>
+ 
 </div>
