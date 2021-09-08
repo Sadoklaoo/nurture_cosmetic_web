@@ -108,7 +108,7 @@ class HistoryController {
         order:{
           consultedAt:'DESC'
         },
-        relations: ["ConsultedProduct","ConsultedProduct.Category"],
+        relations: ["ConsultedProduct","ConsultedProduct.Categories"],
       });
 
       res.status(200).send(clientHistory);
