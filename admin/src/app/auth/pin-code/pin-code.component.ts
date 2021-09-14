@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { getDeepFromObject, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
+import { NbAuthService, NB_AUTH_OPTIONS, getDeepFromObject } from '@nebular/auth';
 import { TokenStorageService } from '../token-storage.service';
 
 @Component({
-  selector: 'ngx-request-password',
-  templateUrl: './request-password.component.html'
+  selector: 'ngx-pin-code',
+  templateUrl: './pin-code.component.html',
+  styleUrls: ['./pin-code.component.scss']
 })
-export class RequestPasswordComponent implements OnInit {
+export class PinCodeComponent implements OnInit {
   redirectDelay: number = 0;
   showMessages: any = {};
   strategy: string = "email";

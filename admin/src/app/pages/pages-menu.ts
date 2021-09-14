@@ -2,7 +2,7 @@ import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS: NbMenuItem[] = [
   {
-    title: 'Catégories',
+    title: 'Categories',
     icon: 'grid-outline',
     children: [
       {
@@ -18,15 +18,15 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
-    title: 'Produits',
+    title: 'Products',
     icon: 'pricetags-outline',
     children: [
       {
-        title: 'List produits',
+        title: 'List products',
         link: '/pages/produits/list-produits',
       },
       {
-        title: 'Ajouter Produit',
+        title: 'Add Product',
         link: '/pages/produits/add-produits',
       },
       {
@@ -46,20 +46,20 @@ export const MENU_ITEMS: NbMenuItem[] = [
     
   },
   {
-    title: 'Allergies',
+    title: 'Allergens',
     icon: 'sun-outline',
     home: true,
     children: [
       {
-        title: 'Add allergies',
+        title: 'Add allergen',
         link: '/pages/allergies/add-allergy',
       },
       {
-        title: 'List allergies',
+        title: 'List allergens',
         link: '/pages/allergies/list-allergies',
       },
       {
-        title: 'Affecter allergies/ingredients',
+        title: 'Associate Ingredient/Allergen',
         link: '/pages/allergies/affect-allergies-ingredients',
       },
     ],

@@ -8,12 +8,16 @@ import { RouterModule } from '@angular/router';
 import { NbAlertModule, NbInputModule, NbButtonModule, NbCheckboxModule } from '@nebular/theme';
 import { NgxAuthRoutingModule } from './auth-routing.module';
 import { NbAuthModule } from '@nebular/auth';
+import { PinCodeComponent } from './pin-code/pin-code.component';
+import { NewPasswordComponent } from './new-password/new-password.component';
 
 
 @NgModule({
   declarations: [
     NgxLoginComponent,
     RequestPasswordComponent,
+    PinCodeComponent,
+    NewPasswordComponent,
   ],
   imports: [
     CommonModule,
