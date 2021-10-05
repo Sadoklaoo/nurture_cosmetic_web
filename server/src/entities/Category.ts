@@ -23,8 +23,7 @@ import { Product } from "./Product";
     @Column()
     Image: string;
   
-    @OneToMany(() => Product, (product) => product.Category)
-    Product: Product[];
+   
 
   }
   

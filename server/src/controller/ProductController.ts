@@ -1,6 +1,6 @@
 import { Allergy } from "./../entities/Allergy";
 import { Request, Response } from "express";
-import { getManager, getRepository } from "typeorm";
+import { Between, getManager, getRepository, Like } from "typeorm";
 import { validate } from "class-validator";
 import { Admin } from "../entities/Admin";
 import * as jwt from "jsonwebtoken";
@@ -14,27 +14,22 @@ import { Client } from "../entities/Client";
 import { History } from "../entities/History";
 
 class ProductController {
-  static MostFrequentProduct(array)
-{
-    if(array.length == 0)
-        return null;
+  static MostFrequentProduct(array) {
+    if (array.length == 0) return null;
     var modeMap = {};
-    var maxEl = array[0], maxCount = 1;
-    for(var i = 0; i < array.length; i++)
-    {
-        var el = array[i];
-        if(modeMap[el] == null)
-            modeMap[el] = 1;
-        else
-            modeMap[el]++;  
-        if(modeMap[el] > maxCount)
-        {
-            maxEl = el;
-            maxCount = modeMap[el];
-        }
+    var maxEl = array[0],
+      maxCount = 1;
+    for (var i = 0; i < array.length; i++) {
+      var el = array[i];
+      if (modeMap[el] == null) modeMap[el] = 1;
+      else modeMap[el]++;
+      if (modeMap[el] > maxCount) {
+        maxEl = el;
+        maxCount = modeMap[el];
+      }
     }
     return maxEl;
-};
+  }
   static newProduct = async (req: Request, res: Response) => {
     //Get parameters from the body
     let {
@@ -124,7 +119,46 @@ class ProductController {
     //Get products from database
     const productRepository = getRepository(Product);
     const products = await productRepository.find({
-      relations: ["Categories", "ProductIngredients","SkinTypes","Type"],
+      relations: ["Categories", "ProductIngredients", "SkinTypes", "Type"],
+    });
+
+    //Send the product object
+    res.send(products);
+  };
+  static listAllProductsUser = async (req: Request, res: Response) => {
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const products = await productRepository.find({
+      relations: ["Categories", "ProductIngredients", "SkinTypes", "Type"],
+      where: {
+        isShown: true,
+      },
+    });
+
+    //Send the product object
+    res.send(products);
+  };
+
+  static listAllProductsUserByKey = async (req: Request, res: Response) => {
+    let { key } = req.body;
+    //Get products from database
+    const productRepository = getRepository(Product);
+    const products = await productRepository.find({
+      relations: ["Categories", "SkinTypes", "Type"],
+      where: [
+        {
+          isShown: true,
+          ProductName: Like(`%${key}%`),
+        },
+        {
+          isShown: true,
+          ProductShortDescription: Like(`%${key}%`),
+        },
+        {
+          isShown: true,
+          usingAdvice: Like(`%${key}%`),
+        },
+      ],
     });
 
     //Send the product object
@@ -331,7 +365,11 @@ class ProductController {
     let ingredients;
     try {
       product = await productRepository.findOneOrFail(idProduct, {
-        relations: ["ProductIngredients", "ProductIngredients.Allergies"],
+        relations: [
+          "ProductIngredients",
+          "ProductIngredients.Allergies",
+          "SkinTypes",
+        ],
       });
       final_allergies = [];
       ingredients = product.ProductIngredients;
@@ -364,26 +402,15 @@ class ProductController {
       res.status(404).send("User not found");
       return;
     }
-
-    if (
-      user.Skin != null &&
-      (user.Skin.SkinType != product.PreferedSkinType ||
-        product.PreferedSkinType != "NORMAL")
-    ) {
-      res.status(301).send("Skin Type doesnt match");
+    console.log(user.isProductCompatible(product));
+    var status = 200;
+    if (user.isProductCompatible(product) == true) {
+      status = 200;
+    } else {
+      status = 400;
     }
 
-    user.Allergies.forEach((userAllergy) => {
-      final_allergies.forEach((allergy) => {
-        if (allergy.AllergyName == userAllergy.AllergyName) {
-          res.status(302).send("Contains triggering allergies");
-        }
-      });
-    });
-
-    console.log(user.isProductCompatible(product));
-
-    res.status(200).send("IsCompatible");
+    res.sendStatus(status);
   };
 
   static listAllProductsByCategoryId = async (req: Request, res: Response) => {
@@ -394,16 +421,21 @@ class ProductController {
     let final = [];
     const category = await categoryRepository.findOne(id);
     const products = await productRepository.find({
-      select: ["id", "ProductName", "Price", "Image","ProductShortDescription"],
+      select: [
+        "id",
+        "ProductName",
+        "Price",
+        "Image",
+        "ProductShortDescription",
+      ],
       relations: ["Categories"],
-      
     });
-    products.forEach((product) =>{
-      product.Categories.forEach((cat)=>{
-        if(cat.id ==category.id){
+    products.forEach((product) => {
+      product.Categories.forEach((cat) => {
+        if (cat.id == category.id) {
           final.push(product);
         }
-      } );
+      });
     });
 
     //Send the product object
@@ -422,7 +454,7 @@ class ProductController {
         "ProductShortDescription",
         "createdAt",
       ],
-      relations: ["Categories"],
+      relations: ["Categories","Type"],
       order: {
         createdAt: "DESC",
       },
@@ -445,17 +477,20 @@ class ProductController {
       return history.ConsultedProduct.id;
     });
 
-    
-
-    var id =ProductController.MostFrequentProduct(products);
+    var id = ProductController.MostFrequentProduct(products);
 
     const product = await productRepository.findOne({
-      select: ["id", "ProductName", "Price", "Image", "ProductShortDescription"],
-      relations: ["Categories"],
-      where:{
-        id:id
-      }
-      
+      select: [
+        "id",
+        "ProductName",
+        "Price",
+        "Image",
+        "ProductShortDescription",
+      ],
+      relations: ["Categories","Type"],
+      where: {
+        id: id,
+      },
     });
 
     /* const product = await productRepository.createQueryBuilder("product")
@@ -467,7 +502,104 @@ class ProductController {
     res.send(product);
   };
 
-  
+  static filterAllProductsUser = async (req: Request, res: Response) => {
+    const { minPrice, maxPrice, isNormal, category, productType } = req.body;
+    const productRepository = getRepository(Product);
+    var result;
+    //Get products from database
+
+    if (category != null && productType != null) {
+      result = await productRepository.find({
+        join: {
+          alias: "product",
+          leftJoinAndSelect: {
+            Categories: "product.Categories",
+            Type: "product.Type",
+          },
+        },
+        order: {
+          id: isNormal,
+        },
+        where: (qb) => {
+          qb.where("product.isShown=1")
+            .andWhere("product.price BETWEEN :begin AND :end", {
+              begin: minPrice,
+              end: maxPrice,
+            })
+            .andWhere("Categories.categoryName= :categoryName", {
+              categoryName: category,
+            })
+            .andWhere("Type.TypeName IN (:types)", { types: productType });
+        },
+      });
+    } else if (category != null) {
+      result = await productRepository.find({
+        join: {
+          alias: "product",
+          leftJoinAndSelect: {
+            Categories: "product.Categories",
+            Type: "product.Type",
+          },
+        },
+        order: {
+          id: isNormal,
+        },
+        where: (qb) => {
+          qb.where("product.isShown=1")
+            .andWhere("product.price BETWEEN :begin AND :end", {
+              begin: minPrice,
+              end: maxPrice,
+            })
+            .andWhere("Categories.categoryName= :categoryName", {
+              categoryName: category,
+            });
+        },
+      });
+    } else if (productType != null) {
+      result = await productRepository.find({
+        join: {
+          alias: "product",
+          leftJoinAndSelect: {
+            Categories: "product.Categories",
+            Type: "product.Type",
+          },
+        },
+        order: {
+          id: isNormal,
+        },
+        where: (qb) => {
+          qb.where("product.isShown=1")
+            .andWhere("product.price BETWEEN :begin AND :end", {
+              begin: minPrice,
+              end: maxPrice,
+            })
+            .andWhere("Type.TypeName IN (:types)", { types: productType });
+        },
+      });
+    } else {
+      result = await productRepository.find({
+        join: {
+          alias: "product",
+          leftJoinAndSelect: {
+            Categories: "product.Categories",
+            Type: "product.Type",
+          },
+        },
+        order: {
+          id: isNormal,
+        },
+        where: (qb) => {
+          qb.where("product.isShown=1").andWhere(
+            "product.price BETWEEN :begin AND :end",
+            { begin: minPrice, end: maxPrice }
+          );
+        },
+      });
+    }
+
+    //Send the product object
+    res.send(result);
+  };
 
   static listAllProductsByTypeId = async (req: Request, res: Response) => {
     let { typeName } = req.body;
@@ -484,12 +616,14 @@ class ProductController {
       join: {
         alias: "product",
         leftJoinAndSelect: {
-          Category: "product.Categories",
+          Categories: "product.Categories",
           Type: "product.Type",
         },
       },
       where: (qb) => {
-        qb.where("Type.TypeName= :typeName", { typeName: typeName });
+        qb.where("product.isShown=1").andWhere("Type.TypeName= :typeName", {
+          typeName: typeName,
+        });
       },
     });
     /* const resultat = await manager.getRepository(Product).createQueryBuilder().select();
@@ -542,15 +676,14 @@ class ProductController {
   };
 
   static productByReference = async (req: Request, res: Response) => {
-    const {
-      Reference} = req.body
+    const { Reference } = req.body;
     let products;
     //Get products from database
     const productRepository = getRepository(Product);
     try {
       products = await productRepository.findOneOrFail({
-        where: { 
-          Reference:Reference
+        where: {
+          Reference: Reference,
         },
         relations: ["ProductIngredients"],
       });
@@ -570,7 +703,7 @@ class ProductController {
     const productRepository = getRepository(Product);
     try {
       products = await productRepository.findOneOrFail(id, {
-        relations: ["ProductIngredients", "Type", "Categories","SkinTypes"],
+        relations: ["ProductIngredients", "Type", "Categories", "SkinTypes"],
       });
     } catch (error) {
       res.status(404).send("Product not found");

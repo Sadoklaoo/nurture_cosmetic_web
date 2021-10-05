@@ -68,13 +68,24 @@ export class Client extends User {
       )
     );
 
-    if (
-      this.Skin != null &&
-      (this.Skin.SkinType != product.PreferedSkinType ||
-        product.PreferedSkinType != "NORMAL")
-    ) {
+   
+
+    var isNormal = false;
+    var isFound = false;
+
+    product.SkinTypes.forEach((skin)=> {
+      if (skin.SkinTypeName=="NORMAL"){
+        isNormal = true;
+      }
+      if (this.Skin != null && this.Skin.SkinType== skin.SkinTypeName){
+        isFound = true;
+      }
+    });
+
+    if(!isNormal || !isFound){
       isCompatible = false;
     }
+
 
     this.Allergies.forEach((userAllergy) => {
       final_allergies.forEach((allergy) => {

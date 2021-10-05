@@ -16,8 +16,13 @@ router.post("/edit",[checkJwt, checkRole(["ADMIN"])], ProductController.editProd
 
 
 //get all products
-router.get("/getAll",[checkJwt, checkRole(["ADMIN","CLIENT"])], ProductController.listAllProducts );
-
+router.get("/getAll",[checkJwt, checkRole(["ADMIN"])], ProductController.listAllProducts );
+//get all products User
+router.get("/getAllUser",[checkJwt, checkRole(["CLIENT"])], ProductController.listAllProductsUser );
+//filter all products User
+router.post("/filterAll",[checkJwt, checkRole(["CLIENT"])], ProductController.filterAllProductsUser );
+//search all products User
+router.post("/search",[checkJwt, checkRole(["CLIENT"])], ProductController.listAllProductsUserByKey );
 //get all favoris
 router.post("/getAllFavoris",[checkJwt, checkRole(["CLIENT"])], ProductController.listAllFavoris );
 

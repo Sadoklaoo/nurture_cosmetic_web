@@ -30,7 +30,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/pages/produits/add-produits',
       },
       {
-        title: 'Affecter produits/ingredients',
+        title: 'Edit product\'s ingredients',
         link: '/pages/produits/produits-ingredients',
       },
       {
@@ -67,7 +67,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
   
   
   {
-    title: 'Réclamations',
+    title: 'Claims',
     icon: 'question-mark-circle-outline',
     link: '/pages/reclamations/list-reclamation',
   },
